@@ -2,6 +2,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import meRoutes from "./routes/me.routes.js";
+
 const app = express();
 app.use(helmet());
 
@@ -20,6 +22,8 @@ app.get("/api/health", (req, res) => {
         message: "My Coach API is running",
     });
 });
+
+app.use("/api/me", meRoutes);
 
 // Add feature routes above this middleware
 app.use((req, res) => {
