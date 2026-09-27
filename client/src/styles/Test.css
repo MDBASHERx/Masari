@@ -66,3 +66,29 @@
     color: var(--color-error);
     background-color: #fee4e2;
 }
+
+.account-test {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid var(--color-border);
+}
+
+.account-test__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-block: 16px;
+}
+
+.account-test__actions button {
+  padding: 10px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.account-test .account-test__error {
+  color: var(--color-error);
+}
