@@ -4,6 +4,7 @@ import helmet from "helmet";
 
 import attemptsRoutes from "./routes/attempts.routes.js";
 import meRoutes from "./routes/me.routes.js";
+import plansRoutes from "./routes/plans.routes.js";
 
 const app = express();
 app.use(helmet());
@@ -26,6 +27,7 @@ app.get("/api/health", (req, res) => {
 
 app.use("/api/me", meRoutes);
 app.use("/api/attempts", attemptsRoutes);
+app.use("/api/plans", plansRoutes);
 
 // Add feature routes above this middleware
 app.use((req, res) => {
