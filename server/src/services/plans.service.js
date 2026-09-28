@@ -74,20 +74,24 @@ export async function getCurrentPlan({ userId, accessToken }) {
     return formatPlan(data);
 }
 
+export function formatTask(task) {
+    return {
+        id: task.id,
+        skillId: task.skill_id,
+        skillName: task.skills?.name ?? null,
+        title: task.title,
+        minutes: task.minutes,
+        status: task.status,
+        position: task.position,
+        reason: task.reason,
+        source: task.source,
+    };
+}
+
 export function formatPlan(row) {
     const tasks = [...row.plan_tasks]
         .sort((a, b) => a.position - b.position)
-        .map((task) => ({
-            id: task.id,
-            skillId: task.skill_id,
-            skillName: task.skills?.name ?? null,
-            title: task.title,
-            minutes: task.minutes,
-            status: task.status,
-            position: task.position,
-            reason: task.reason,
-            source: task.source,
-        }));
+        .map(formatTask);
 
     return {
         id: row.id,
