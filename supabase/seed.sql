@@ -45,11 +45,8 @@ insert into public.questions (id, skill_id, prompt, options, difficulty) values
   ('pct-6', 'percentages', 'انخفض سعر هاتف من 800 إلى 680. ما نسبة الانخفاض؟',       '["12%","17.6%","15%","85%"]',     2),
   ('pct-7', 'percentages', 'حصل طالب على 42 من 60 في اختبار. ما نسبته المئوية؟',     '["42%","60%","18%","70%"]',       2),
   ('pct-8', 'percentages', 'أصبح سعر سلعة 200 بعد زيادة 25%. كم كان سعرها قبل الزيادة؟', '["160","150","175","250"]',    3)
-on conflict (id) do update set
-  skill_id = excluded.skill_id,
-  prompt = excluded.prompt,
-  options = excluded.options,
-  difficulty = excluded.difficulty;
+-- Never overwrite existing questions
+on conflict (id) do nothing;
 
 -- correct_option is the 0-based index inside options
 insert into private.answer_keys (question_id, correct_option, explanation) values
@@ -77,6 +74,5 @@ insert into private.answer_keys (question_id, correct_option, explanation) value
   ('pct-6',  2, 'الانخفاض 120 من أصل 800، و 120 ÷ 800 = 15%'),
   ('pct-7',  3, '42 ÷ 60 = 0.7 = 70%'),
   ('pct-8',  0, 'السعر الجديد يمثل 125% من القديم: 200 ÷ 1.25 = 160')
-on conflict (question_id) do update set
-  correct_option = excluded.correct_option,
-  explanation = excluded.explanation;
+-- Never overwrite existing answer keys
+on conflict (question_id) do nothing;
