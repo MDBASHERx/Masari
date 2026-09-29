@@ -1,6 +1,6 @@
 import { vi } from "vitest";
 
-// Tiny stand-in for supabase-js: supports from().select().eq().order(),
+// Tiny stand-in for supabase-js: supports from().select().eq().order().limit(),
 // update(patch), maybeSingle() or await, plus rpc(). Rows are plain objects.
 export function fakeClient({ tables = {}, rpc = {} } = {}) {
     return {
@@ -15,6 +15,7 @@ export function fakeClient({ tables = {}, rpc = {} } = {}) {
                     return builder;
                 },
                 order: () => builder,
+                limit: () => builder,
                 eq: (column, value) => {
                     filters.push([column, value]);
                     return builder;
