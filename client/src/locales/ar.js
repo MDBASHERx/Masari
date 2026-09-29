@@ -1,4 +1,8 @@
+import learning from "./ar.learning.js";
+
 const ar = {
+    ...learning,
+
     meta: {
         title: "EXO | دليلك الأكاديمي",
     },
