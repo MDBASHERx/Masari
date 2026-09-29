@@ -195,3 +195,94 @@ describe("formatAttempt", () => {
         }
     });
 });
+
+describe("deactivated questions", () => {
+    // After migration 20260929120000, RLS still returns questions that are
+    // part of the student's own attempts, even when is_active = false.
+    const withDeactivatedQuestion = (overrides = {}) =>
+        openAttempt({
+            attempt_items: [
+                item("frac-1", "fractions", 1),
+                item("eq-1", "equations", 2, { questions: { skill_id: "equations", prompt: "old eq-1", options: OPTIONS, is_active: false } }),
+            ],
+            ...overrides,
+        });
+
+    it("resumes an open attempt whose question was deactivated", async () => {
+        const open = withDeactivatedQuestion();
+        clients.admin = fakeClient({ tables: { attempts: [open] } });
+        clients.user = fakeClient({ tables: { attempts: [open] } });
+
+        const { attempt, resumed } = await startDiagnostic({ userId: STUDENT_A, accessToken: "t" });
+
+        expect(resumed).toBe(true);
+        expect(attempt.questions.map((q) => q.id)).toEqual(["frac-1", "eq-1"]);
+        expect(attempt.questions[1].prompt).toBe("old eq-1");
+    });
+
+    it("grades and reviews a submitted attempt with a deactivated question", async () => {
+        const attempt = withDeactivatedQuestion();
+        clients.admin = fakeClient({
+            tables: { attempts: [attempt] },
+            rpc: {
+                get_answer_keys: async () => ({ data: KEYS, error: null }),
+                save_attempt_result: async (args) => {
+                    attempt.status = "submitted";
+                    attempt.score = args.p_score;
+                    attempt.submit_request_id = args.p_request_id;
+                    for (const saved of args.p_items) {
+                        Object.assign(attempt.attempt_items.find((i) => i.question_id === saved.questionId), {
+                            selected_option: saved.selectedOption, is_correct: saved.isCorrect,
+                        });
+                    }
+                    return { data: true, error: null };
+                },
+            },
+        });
+        clients.user = fakeClient({ tables: { attempts: [attempt] } });
+
+        const result = await submitAttempt({
+            userId: STUDENT_A, accessToken: "t", attemptId: ATTEMPT_ID,
+            answers: answersAllCorrect, requestId: "request-0001",
+        });
+
+        expect(result.score).toBe(100);
+        expect(result.questions[1]).toMatchObject({ id: "eq-1", isCorrect: true });
+        expect(result.skills.find((s) => s.skillId === "equations").percent).toBe(100);
+    });
+
+    it("never puts a deactivated question in a new diagnostic", async () => {
+        clients.admin = fakeClient({
+            tables: { attempts: [] },
+            rpc: { start_attempt: async () => ({ data: ATTEMPT_ID, error: null }) },
+        });
+        clients.user = fakeClient({
+            tables: {
+                skills: [{ id: "fractions", position: 1 }],
+                // frac-1 is visible (it is in an old attempt) but inactive
+                questions: [
+                    { id: "frac-1", skill_id: "fractions", difficulty: 1, is_active: false },
+                    { id: "frac-2", skill_id: "fractions", difficulty: 1, is_active: true },
+                    { id: "frac-3", skill_id: "fractions", difficulty: 2, is_active: true },
+                ],
+                attempts: [openAttempt()],
+            },
+        });
+
+        await startDiagnostic({ userId: STUDENT_A, accessToken: "t" });
+
+        expect(clients.admin.rpc.mock.calls[0][1].p_question_ids).toEqual(["frac-2", "frac-3"]);
+    });
+
+    it("returns a clear 500 instead of crashing if question data is still missing", () => {
+        const row = openAttempt({
+            attempt_items: [item("frac-1", "fractions", 1), { ...item("eq-1", "equations", 2), questions: null }],
+        });
+
+        let error;
+        try { formatAttempt(row); } catch (e) { error = e; }
+
+        expect(error).toMatchObject({ status: 500, code: "INTERNAL_ERROR" });
+        expect(error).not.toBeInstanceOf(TypeError);
+    });
+});
