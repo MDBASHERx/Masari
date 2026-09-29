@@ -1,5 +1,5 @@
 import { LearningError } from "../learning/errors.js";
-import { buildSystemPrompt } from "./prompts.js";
+import { buildSystemPrompt, buildUntrustedContext } from "./prompts.js";
 import { getProvider } from "./providers/index.js";
 import { suggestedTaskSchema, tutorReplySchema } from "./tutorReply.schema.js";
 
@@ -44,11 +44,13 @@ export async function generateTutorReply({
         throw new LearningError("VALIDATION_ERROR", `Message is longer than ${MAX_MESSAGE_LENGTH} characters`);
     }
 
+    // Trusted instructions and untrusted data travel separately
     const system = buildSystemPrompt({ mode, learner });
+    const context = buildUntrustedContext(learner);
     const messages = [...boundHistory(history), { role: "user", content: message.trim() }];
 
     const raw = await callWithTimeout(
-        (signal) => provider.generate({ system, messages, mode, learner, signal }),
+        (signal) => provider.generate({ system, context, messages, mode, learner, signal }),
         timeoutMs,
     );
 
@@ -118,4 +120,27 @@ function cleanSuggestedTask(task, learner) {
     if (!knownSkill) return null;
 
     return { ...parsed.data, minutes: Math.min(parsed.data.minutes, learner.dailyMinutes) };
+}
+
+/**
+ * For real provider adapters: returns the chat messages with the untrusted
+ * context attached to the LATEST user turn as its own content part, before
+ * the student's text. Never put `context` in the system prompt.
+ *
+ * @returns {{role: "user"|"assistant", content: string | {type: "text", text: string}[]}[]}
+ */
+export function toChatMessages({ context, messages }) {
+    if (!context) return messages;
+
+    const last = messages.at(-1);
+    return [
+        ...messages.slice(0, -1),
+        {
+            role: last.role,
+            content: [
+                { type: "text", text: context },
+                { type: "text", text: last.content },
+            ],
+        },
+    ];
 }
