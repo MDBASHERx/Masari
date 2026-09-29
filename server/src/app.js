@@ -6,6 +6,7 @@ import attemptsRoutes from "./routes/attempts.routes.js";
 import careerPathsRoutes from "./routes/careerPaths.routes.js";
 import meRoutes from "./routes/me.routes.js";
 import plansRoutes from "./routes/plans.routes.js";
+import progressRoutes from "./routes/progress.routes.js";
 import tasksRoutes from "./routes/tasks.routes.js";
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/me", meRoutes);
 app.use("/api/attempts", attemptsRoutes);
 app.use("/api/plans", plansRoutes);
 app.use("/api/tasks", tasksRoutes);
+app.use("/api/progress", progressRoutes);
 app.use("/api/career-paths", careerPathsRoutes);
 
 // Add feature routes above this middleware

@@ -4,9 +4,10 @@ import { LearningError } from "./learning/errors.js";
 import { gradeAttempt } from "./learning/grading.js";
 
 export const QUESTIONS_PER_SKILL = 2;
+export const PRACTICE_QUESTIONS = 3;
 
 const ATTEMPT_SELECT = `
-    id, type, status, score, created_at, submitted_at,
+    id, type, skill_id, status, score, created_at, submitted_at,
     attempt_items ( question_id, position, selected_option, is_correct,
         questions ( skill_id, prompt, options ) )`;
 
@@ -19,7 +20,7 @@ const ATTEMPT_SELECT = `
 export async function startDiagnostic({ userId, accessToken }) {
     const admin = createAdminClient();
 
-    const open = await findOpenDiagnosticId(admin, userId);
+    const open = await findOpenAttemptId(admin, userId, "diagnostic");
     if (open) {
         return { attempt: await getAttempt({ accessToken, attemptId: open }), resumed: true };
     }
@@ -36,7 +37,7 @@ export async function startDiagnostic({ userId, accessToken }) {
     if (error) {
         // Two "start" clicks at the same time: the database kept only one
         if (error.code === "23505") {
-            const existing = await findOpenDiagnosticId(admin, userId);
+            const existing = await findOpenAttemptId(admin, userId, "diagnostic");
             if (existing) {
                 return { attempt: await getAttempt({ accessToken, attemptId: existing }), resumed: true };
             }
@@ -47,15 +48,17 @@ export async function startDiagnostic({ userId, accessToken }) {
     return { attempt: await getAttempt({ accessToken, attemptId }), resumed: false };
 }
 
-async function findOpenDiagnosticId(admin, userId) {
-    const { data, error } = await admin
+async function findOpenAttemptId(admin, userId, type, skillId = null) {
+    let query = admin
         .from("attempts")
         .select("id")
         .eq("user_id", userId)
-        .eq("type", "diagnostic")
-        .eq("status", "in_progress")
-        .maybeSingle();
+        .eq("type", type)
+        .eq("status", "in_progress");
 
+    if (type === "practice") query = query.eq("skill_id", skillId);
+
+    const { data, error } = await query.maybeSingle();
     if (error) throw error;
     return data?.id ?? null;
 }
@@ -84,6 +87,76 @@ async function pickDiagnosticQuestions(supabase) {
     return questionIds;
 }
 
+/**
+ * Start guided practice on one skill, or resume the open one for that skill.
+ * Questions the student has seen least come first.
+ * @returns {Promise<{attempt: object, resumed: boolean}>}
+ */
+export async function startPractice({ userId, accessToken, skillId }) {
+    const admin = createAdminClient();
+
+    const open = await findOpenAttemptId(admin, userId, "practice", skillId);
+    if (open) {
+        return { attempt: await getAttempt({ accessToken, attemptId: open }), resumed: true };
+    }
+
+    const questionIds = await pickPracticeQuestions(createUserClient(accessToken), skillId);
+
+    const { data: attemptId, error } = await admin.rpc("start_attempt", {
+        p_user_id: userId,
+        p_type: "practice",
+        p_skill_id: skillId,
+        p_question_ids: questionIds,
+    });
+
+    if (error) {
+        if (error.code === "23505") {
+            const existing = await findOpenAttemptId(admin, userId, "practice", skillId);
+            if (existing) {
+                return { attempt: await getAttempt({ accessToken, attemptId: existing }), resumed: true };
+            }
+        }
+        throw error;
+    }
+
+    return { attempt: await getAttempt({ accessToken, attemptId }), resumed: false };
+}
+
+async function pickPracticeQuestions(supabase, skillId) {
+    const [skillResult, questionsResult, seenResult] = await Promise.all([
+        supabase.from("skills").select("id").eq("id", skillId).maybeSingle(),
+        supabase.from("questions").select("id, difficulty").eq("skill_id", skillId).eq("is_active", true)
+            .order("difficulty").order("id"),
+        // RLS returns only this student's items
+        supabase.from("attempt_items").select("question_id").limit(1000),
+    ]);
+
+    for (const result of [skillResult, questionsResult, seenResult]) {
+        if (result.error) throw result.error;
+    }
+    if (!skillResult.data) {
+        throw new LearningError("VALIDATION_ERROR", `Unknown skill ${skillId}`, 400);
+    }
+
+    const timesSeen = new Map();
+    for (const { question_id: id } of seenResult.data) {
+        timesSeen.set(id, (timesSeen.get(id) ?? 0) + 1);
+    }
+
+    const questionIds = [...questionsResult.data]
+        .sort((a, b) =>
+            (timesSeen.get(a.id) ?? 0) - (timesSeen.get(b.id) ?? 0)
+            || a.difficulty - b.difficulty
+            || a.id.localeCompare(b.id))
+        .slice(0, PRACTICE_QUESTIONS)
+        .map((q) => q.id);
+
+    if (questionIds.length === 0) {
+        throw new LearningError("INTERNAL_ERROR", `No active questions for ${skillId}`, 500);
+    }
+    return questionIds;
+}
+
 // ---------- Read ----------
 
 /** Read an attempt through RLS: only the owner can see it. */
@@ -107,6 +180,7 @@ export function formatAttempt(row) {
     return {
         id: row.id,
         type: row.type,
+        skillId: row.skill_id ?? null,
         status: row.status,
         score: row.score === null ? null : Number(row.score),
         createdAt: row.created_at,
