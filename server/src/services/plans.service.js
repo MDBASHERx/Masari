@@ -5,13 +5,14 @@ import { LearningError } from "./learning/errors.js";
 import { buildPlan } from "./learning/planBuilder.js";
 
 const PLAN_SELECT = `
-    id, version, source_attempt_id, created_at,
+    id, version, source_attempt_id, is_current, created_at,
     plan_tasks ( id, skill_id, title, minutes, status, position, reason, source,
         skills ( name ) )`;
 
 /**
  * Build and save a plan from a submitted diagnostic.
- * Calling it again for the same attempt returns the existing plan.
+ * Each diagnostic has at most one plan: calling it again for the same attempt
+ * returns that plan (even if a newer plan is current) and changes nothing.
  * @returns {Promise<{plan: object, created: boolean}>}
  */
 export async function createPlanFromAttempt({ userId, accessToken, attemptId }) {
@@ -53,10 +54,25 @@ export async function createPlanFromAttempt({ userId, accessToken, attemptId }) 
     });
     if (error) throw error;
 
+    // The exact plan the database created or found, not "whatever is current now"
     return {
-        plan: await getCurrentPlan({ userId, accessToken }),
+        plan: await getPlanById({ accessToken, planId: data.planId }),
         created: data.created,
     };
+}
+
+/** One of the student's plans by id, read through RLS. */
+export async function getPlanById({ accessToken, planId }) {
+    const { data, error } = await createUserClient(accessToken)
+        .from("learning_plans")
+        .select(PLAN_SELECT)
+        .eq("id", planId)
+        .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new LearningError("PLAN_NOT_FOUND", "Plan not found", 404);
+
+    return formatPlan(data);
 }
 
 /** The student's current plan, read through RLS. */
@@ -93,6 +109,7 @@ export function formatPlan(row) {
         id: row.id,
         version: row.version,
         sourceAttemptId: row.source_attempt_id,
+        isCurrent: row.is_current,
         createdAt: row.created_at,
         totalMinutes: tasks.reduce((sum, task) => sum + task.minutes, 0),
         tasks,

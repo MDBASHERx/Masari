@@ -44,13 +44,14 @@ const submittedAttempt = (overrides = {}) => ({
     ...overrides,
 });
 
-const savedPlan = (tasks) => ({
+const savedPlan = (tasks, overrides = {}) => ({
     id: PLAN_ID,
     user_id: STUDENT_A,
     is_current: true,
     version: 1,
     source_attempt_id: ATTEMPT_ID,
     created_at: "2026-09-28T10:06:00Z",
+    ...overrides,
     plan_tasks: tasks.map((t, i) => ({
         id: `task-${i}`,
         skill_id: t.skillId,
@@ -71,11 +72,18 @@ describe("createPlanFromAttempt", () => {
         plans = [];
         clients.admin = fakeClient({
             rpc: {
+                // Behaves like the database function: one plan per attempt, ever
                 create_plan: async (args) => {
                     const existing = plans.find((p) => p.source_attempt_id === args.p_attempt_id);
-                    if (existing) return { data: { planId: existing.id, created: false }, error: null };
-                    plans.push(savedPlan(args.p_tasks));
-                    return { data: { planId: PLAN_ID, created: true }, error: null };
+                    if (existing) {
+                        return { data: { planId: existing.id, created: false, isCurrent: existing.is_current }, error: null };
+                    }
+                    plans.forEach((p) => { p.is_current = false; });
+                    const plan = savedPlan(args.p_tasks, {
+                        id: `plan-${plans.length + 1}`, source_attempt_id: args.p_attempt_id, version: plans.length + 1,
+                    });
+                    plans.push(plan);
+                    return { data: { planId: plan.id, created: true, isCurrent: true }, error: null };
                 },
             },
         });
@@ -113,6 +121,43 @@ describe("createPlanFromAttempt", () => {
 
         expect(second.created).toBe(false);
         expect(plans).toHaveLength(1);
+    });
+
+    it("returns the original plan for a stale retry and keeps the current plan", async () => {
+        const ATTEMPT_B = "aaaaaaaa-0000-4000-8000-000000000002";
+        clients.user = fakeClient({
+            tables: {
+                attempts: [submittedAttempt(), submittedAttempt({ id: ATTEMPT_B })],
+                profiles: [{ id: STUDENT_A, daily_minutes: 15 }],
+                skills: SKILLS,
+                learning_plans: plans,
+            },
+        });
+        const create = (attemptId) => createPlanFromAttempt({ userId: STUDENT_A, accessToken: "t", attemptId });
+
+        const planA = await create(ATTEMPT_ID);
+        const planB = await create(ATTEMPT_B);
+        const retryA = await create(ATTEMPT_ID);
+
+        expect(retryA.created).toBe(false);
+        expect(retryA.plan.id).toBe(planA.plan.id);       // the exact plan, not "whatever is current"
+        expect(retryA.plan.isCurrent).toBe(false);
+        expect(plans).toHaveLength(2);
+        expect(plans.find((p) => p.is_current).id).toBe(planB.plan.id);
+    });
+
+    it("returns the plan the database reported, even if another plan is current", async () => {
+        // Another plan is current, but create_plan says it created plan-new
+        plans.push(savedPlan([], { id: "someone-elses-current", is_current: true, source_attempt_id: "other" }));
+        clients.admin.rpc.mockImplementationOnce(async () => {
+            plans.push(savedPlan([{ skillId: "fractions", title: "x", minutes: 10, position: 1, reason: "r" }],
+                { id: "plan-new", is_current: false }));
+            return { data: { planId: "plan-new", created: true, isCurrent: false }, error: null };
+        });
+
+        const { plan } = await createPlanFromAttempt({ userId: STUDENT_A, accessToken: "t", attemptId: ATTEMPT_ID });
+
+        expect(plan.id).toBe("plan-new");
     });
 
     it("refuses an attempt that is not submitted yet", async () => {
