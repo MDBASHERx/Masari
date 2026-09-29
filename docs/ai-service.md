@@ -44,6 +44,8 @@ Keep the student's message saved even when the AI fails.
 
 ## What the service guarantees
 
+- The system prompt holds trusted content only: our instructions, validated numbers, and skill ids/names from the database
+- Untrusted learner fields (the student's goal, task titles) are sent separately as `context`: one `<untrusted_student_context>` JSON block, with `<` and `>` escaped so it cannot be closed early. The system prompt tells the model to treat it as data
 - The student's message is sent as user content, never inside the system prompt
 - History: last 10 user/assistant messages, each cut to 1000 chars; other roles dropped
 - The student's name is never sent to the provider
@@ -54,5 +56,9 @@ Keep the student's message saved even when the AI fails.
 
 `LLM_PROVIDER=mock` (default) returns fixed, checked Arabic replies labelled `[رد تجريبي]`.
 To add a real provider: add `providers/<name>Provider.js` with
-`generate({ system, messages, signal }) => Promise<string>`, register it in `providers/index.js`,
+`generate({ system, context, messages, signal }) => Promise<string>`, register it in `providers/index.js`,
 and set `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL`.
+
+- Send `system` as the system prompt
+- **Never** add `context` to the system prompt. Use `toChatMessages({ context, messages })`
+  (from `generateTutorReply.js`): it attaches `context` as a separate text part of the latest user turn
