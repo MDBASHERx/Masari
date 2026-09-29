@@ -3,6 +3,7 @@ import express from "express";
 import helmet from "helmet";
 
 import meRoutes from "./routes/me.routes.js";
+import conversationsRoutes from "./routes/conversations.routes.js";
 
 const app = express();
 app.use(helmet());
@@ -24,6 +25,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/me", meRoutes);
+app.use("/api/conversations", conversationsRoutes);
 
 // Add feature routes above this middleware
 app.use((req, res) => {
