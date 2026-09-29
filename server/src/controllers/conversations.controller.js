@@ -1,7 +1,7 @@
 import createUserClient from "../utils/createUserClient.js";
 
 const conversationFields = "id, title, mode, created_at";
-const messageFields = "id, role, content, request_id, created_at";
+const messageFields = "id, role, content, request_id, suggested_task, created_at";
 
 const notFound = (res) => {
     return res.status(404).json({
