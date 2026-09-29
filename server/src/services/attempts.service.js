@@ -177,6 +177,17 @@ export function formatAttempt(row) {
     const submitted = row.status === "submitted";
     const items = [...row.attempt_items].sort((a, b) => a.position - b.position);
 
+    // RLS keeps assigned questions readable even after deactivation
+    // (migration 20260929120000). If one is still missing, fail clearly.
+    const missing = items.find((item) => !item.questions);
+    if (missing) {
+        throw new LearningError(
+            "INTERNAL_ERROR",
+            `Question ${missing.question_id} of attempt ${row.id} is not readable`,
+            500,
+        );
+    }
+
     return {
         id: row.id,
         type: row.type,
