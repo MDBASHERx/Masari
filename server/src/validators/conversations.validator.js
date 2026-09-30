@@ -18,7 +18,3 @@ export const paginationSchema = z.object({
     offset: z.coerce.number().int().min(0).max(100000).default(0),
     limit: z.coerce.number().int().min(1).max(100).default(30),
 });
-
-export const demoReplySchema = z.object({
-    requestId: z.string().uuid(),
-}).strict();

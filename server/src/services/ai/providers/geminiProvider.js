@@ -94,17 +94,9 @@ export const createGeminiProvider = () => ({
         if (!response.ok) {
             const errorBody = await response.json().catch(() => null);
 
-            const providerMessage = String(
-                errorBody?.error?.message || "No error details",
-            )
-                .split(apiKey)
-                .join("[REDACTED]")
-                .slice(0, 1500);
-
             console.error("[Gemini] Request rejected:", {
                 httpStatus: response.status,
                 status: errorBody?.error?.status,
-                message: providerMessage,
             });
 
             if (response.status === 429) {

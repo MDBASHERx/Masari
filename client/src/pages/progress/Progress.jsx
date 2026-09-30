@@ -1,8 +1,9 @@
+import BackLink from "../../components/design/BackLink.jsx";
+import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 
 import {
-    USE_MOCK_PROGRESS,
     getProgress,
 } from "../../services/progress.js";
 
@@ -155,21 +156,11 @@ function Progress() {
     return (
         <main className="progress-page">
             <header className="progress-header">
-                <Link to="/">
+                <BackLink>
                     {locale.all.backHome}
-                </Link>
+                </BackLink>
 
-                {USE_MOCK_PROGRESS && (
-                    <p className="progress-mock">
-                        وضع تجريبي
-                    </p>
-                )}
-
-                <h1>{locale.progress.title}</h1>
-
-                <p>
-                    {locale.progress.subtitle}
-                </p>
+                <PageHeading icon="chart" tone="blue" title={locale.progress.title} description={locale.progress.subtitle} />
             </header>
 
             {/* Latest diagnostic */}

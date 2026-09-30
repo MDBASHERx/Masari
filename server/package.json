@@ -1,8 +1,8 @@
 {
-  "name": "server",
+  "name": "masari-server",
   "version": "1.0.0",
   "private": true,
-  "description": "my-coach backend API",
+  "description": "Masari backend API",
   "main": "src/server.js",
   "type": "module",
   "scripts": {

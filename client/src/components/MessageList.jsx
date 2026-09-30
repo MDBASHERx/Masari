@@ -32,11 +32,11 @@ function MessageList({
       )}
 
       {error && (
-        <div role="alert">
+        <div className="chat-feedback" role="alert">
           <p>{error}</p>
 
-          {canRetry && <button onClick={onRetry}>إعادة المحاولة</button>}
-          {!canRetry && onDismiss && <button onClick={onDismiss}>إخفاء الخطأ</button>}
+          {canRetry && <button className="ui-button ui-button--soft" type="button" disabled={isLoading} onClick={onRetry}>إعادة المحاولة</button>}
+          {!canRetry && onDismiss && <button className="ui-button ui-button--soft" type="button" onClick={onDismiss}>إخفاء الخطأ</button>}
         </div>
       )}
     </div>

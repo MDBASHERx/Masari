@@ -14,7 +14,7 @@ The design document asks us to pick the provider after a small Arabic evaluation
 
 ## How to run
 
-1. Add the provider adapter in `server/src/services/ai/providers/` (see `docs/ai-service.md`)
+1. Use the implemented Gemini adapter, or add another adapter in `server/src/services/ai/providers/` (see `docs/ai-service.md`)
 2. Set `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL` in `server/.env` (never commit it)
 3. From `server/`:
 

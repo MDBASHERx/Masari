@@ -1,8 +1,9 @@
+import BackLink from "../../components/design/BackLink.jsx";
+import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import LearningTaskCard from "../../components/learningPath/LearningTaskCard.jsx";
 import {
-    USE_MOCK_LEARNING,
     getCurrentPlan,
     learningErrorKey,
     updateTaskStatus,
@@ -67,15 +68,15 @@ function LearningPath() {
 
     const header = (
         <>
-            <Link to="/">{locale.all.backHome}</Link>
-            {USE_MOCK_LEARNING && <p className="assessment-mock">{locale.assessment.mockMode}</p>}
-            <h1 id="plan-title">{locale.learningPath.title}</h1>
+            <BackLink>{locale.all.backHome}</BackLink>
+
+            <PageHeading icon="path" tone="mint" id="plan-title" title={locale.learningPath.title} description="خطوة صغيرة اليوم، ومهارة أقوى غدًا." />
         </>
     );
 
     if (loading) {
         return (
-            <main className="assessment-page">
+            <main className="assessment-page learning-plan-page">
                 <section className="assessment-card" aria-busy="true">
                     <p role="status">{locale.learningPath.loading}</p>
                 </section>
@@ -85,7 +86,7 @@ function LearningPath() {
 
     if (loadError) {
         return (
-            <main className="assessment-page">
+            <main className="assessment-page learning-plan-page">
                 <section className="assessment-card" aria-labelledby="plan-title">
                     {header}
                     <p className="assessment-error" role="alert">{locale.learningErrors[loadError]}</p>
@@ -100,7 +101,7 @@ function LearningPath() {
     // ---------- No plan yet ----------
     if (!plan) {
         return (
-            <main className="assessment-page">
+            <main className="assessment-page learning-plan-page">
                 <section className="assessment-card" aria-labelledby="plan-title">
                     {header}
                     <p className="assessment-description">{locale.learningPath.empty}</p>
@@ -117,15 +118,16 @@ function LearningPath() {
     const progress = tasks.length ? Math.round((doneCount / tasks.length) * 100) : 0;
 
     return (
-        <main className="assessment-page">
+        <main className="assessment-page learning-plan-page">
             <section className="assessment-card" aria-labelledby="plan-title">
                 {header}
 
                 <p className="assessment-description">{locale.learningPath.intro}</p>
 
-                <div className="plan-summary">
-                    <span>{locale.learningPath.doneOf(doneCount, tasks.length)}</span>
-                    <span>{locale.learningPath.totalTime(plan.totalMinutes)}</span>
+                <div className="plan-metrics">
+                    <div><span>خطوات أنجزتها</span><strong><bdi dir="ltr">{doneCount} / {tasks.length}</bdi></strong><small>كل خطوة تُحسب لك</small></div>
+                    <div><span>وقت الخطة</span><strong>{plan.totalMinutes} <small>دقيقة</small></strong><small>قسّمها بما يناسب يومك</small></div>
+                    <div><span>إنجاز المهام</span><strong>{progress}%</strong><small>يعكس إكمال المهام، وليس إتقان المهارة</small></div>
                 </div>
                 <div
                     className="question-card__progress"

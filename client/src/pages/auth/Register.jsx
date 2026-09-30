@@ -105,7 +105,7 @@ function Register()
         <main className="auth-page">
             <section className="auth-card" aria-labelledby="register-title">
                 <p className="auth-brand">
-                    <bdi lang="en" dir="ltr">
+                    <bdi lang="ar" dir="rtl">
                         {locale.auth.brand}
                     </bdi>
                 </p>

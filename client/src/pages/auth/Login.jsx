@@ -60,7 +60,7 @@ function Login()
     if (isAuthenticated) 
     {
         const requestedPath = location.state?.from;
-        const destination = typeof requestedPath === "string" && requestedPath.startsWith("/")
+        const destination = typeof requestedPath === "string" && requestedPath.startsWith("/") && !requestedPath.startsWith("//") && !requestedPath.includes("\\")
             ? requestedPath
             : "/";
         return <Navigate to={destination} replace />;
@@ -70,7 +70,7 @@ function Login()
         <main className="auth-page">
             <section className="auth-card" aria-labelledby="login-title">
                 <p className="auth-brand">
-                    <bdi lang="en" dir="ltr">
+                    <bdi lang="ar" dir="rtl">
                         {locale.auth.brand}
                     </bdi>
                 </p>

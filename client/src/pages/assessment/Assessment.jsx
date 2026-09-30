@@ -1,9 +1,9 @@
+import BackLink from "../../components/design/BackLink.jsx";
 import { useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import QuestionCard from "../../components/assessment/QuestionCard.jsx";
 import ResultSummary from "../../components/assessment/ResultSummary.jsx";
 import {
-    USE_MOCK_LEARNING,
     createPlan,
     learningErrorKey,
     startDiagnostic,
@@ -109,9 +109,9 @@ function Assessment() {
             <main className="assessment-page">
                 <section className="assessment-card" aria-labelledby="assessment-title">
                     {practiceSkill
-                        ? <Link to="/learning-path">{locale.practice.backToPlan}</Link>
-                        : <Link to="/">{locale.all.backHome}</Link>}
-                    {USE_MOCK_LEARNING && <p className="assessment-mock">{locale.assessment.mockMode}</p>}
+                        ? <BackLink to="/learning-path">{locale.practice.backToPlan}</BackLink>
+                        : <BackLink>{locale.all.backHome}</BackLink>}
+
 
                     <h1 id="assessment-title">
                         {practiceSkill ? locale.practice.title(skillName) : locale.assessment.title}
@@ -143,8 +143,8 @@ function Assessment() {
         return (
             <main className="assessment-page">
                 <section className="assessment-card">
-                    <Link to="/">{locale.all.backHome}</Link>
-                    {USE_MOCK_LEARNING && <p className="assessment-mock">{locale.assessment.mockMode}</p>}
+                    <BackLink>{locale.all.backHome}</BackLink>
+
 
                     <ResultSummary attempt={attempt} />
 
@@ -178,7 +178,7 @@ function Assessment() {
     return (
         <main className="assessment-page">
             <section className="assessment-card" aria-live="polite">
-                {USE_MOCK_LEARNING && <p className="assessment-mock">{locale.assessment.mockMode}</p>}
+
 
                 <QuestionCard
                     key={question.id}
