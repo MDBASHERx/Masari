@@ -7,11 +7,37 @@ import SuggestedTask from "../components/SuggestedTask.jsx";
 import TutorMentorSelector from "../components/TutorMentorSelector.jsx";
 import { createConversation, getConversations, getMessages, saveUserMessage } from "../services/conversations.js";
 import { addSuggestedTask, getCurrentPlan } from "../services/learning.js";
+import { useAuth } from "../hooks/useAuth.js";
 import "../styles/chat.css";
 
 const PAGE_SIZE = 30;
 const SELECTED_KEY = "my-coach:selected-conversation";
+const PENDING_KEY = "my-coach:pending-messages";
+const TASKS_KEY = "my-coach:suggested-tasks";
 const errorMessage = (error, fallback) => error.response?.data?.message || fallback;
+
+function readStored(key) {
+    try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+    catch { return {}; }
+}
+
+function userStorageKey(prefix, userId) {
+    return `${prefix}:${userId}`;
+}
+
+function savePending(userId, pending) {
+    const key = userStorageKey(PENDING_KEY, userId);
+    const stored = readStored(key);
+    stored[pending.conversationId] = pending;
+    localStorage.setItem(key, JSON.stringify(stored));
+}
+
+function removePending(userId, conversationId) {
+    const key = userStorageKey(PENDING_KEY, userId);
+    const stored = readStored(key);
+    delete stored[conversationId];
+    localStorage.setItem(key, JSON.stringify(stored));
+}
 
 async function loadEveryPage(loader, signal) {
     const items = [];
@@ -32,6 +58,7 @@ function mergeMessages(previous, incoming) {
 
 export default function Chat() {
     const navigate = useNavigate();
+    const { user } = useAuth();
     const [conversations, setConversations] = useState([]);
     const [selected, setSelected] = useState(null);
     const selectedRef = useRef(null);
@@ -44,7 +71,8 @@ export default function Chat() {
     const [error, setError] = useState("");
     const [pendingMessage, setPendingMessage] = useState(null);
     const [taskStates, setTaskStates] = useState({});
-    const taskRequestIds = useRef(new Map());
+    const [currentPlan, setCurrentPlan] = useState(null);
+    const sendingConversationIds = useRef(new Set());
 
     const selectConversation = useCallback(async (conversation) => {
         selectedRef.current = conversation;
@@ -52,8 +80,9 @@ export default function Chat() {
         setMode(conversation.mode);
         setMessages([]);
         setError("");
-        setPendingMessage(null);
-        setIsSending(false);
+        const restoredPending = readStored(userStorageKey(PENDING_KEY, user.id))[conversation.id] || null;
+        setPendingMessage(restoredPending);
+        setIsSending(sendingConversationIds.current.has(conversation.id));
         setIsLoadingMessages(true);
         localStorage.setItem(SELECTED_KEY, conversation.id);
         try {
@@ -61,7 +90,14 @@ export default function Chat() {
                 const data = await getMessages(conversation.id, { offset, limit: PAGE_SIZE, signal });
                 return { items: data.messages, pagination: data.pagination };
             });
-            if (selectedRef.current?.id === conversation.id) setMessages(loaded);
+            if (selectedRef.current?.id === conversation.id) {
+                const hasSavedUserMessage = restoredPending && loaded.some((message) => message.request_id === restoredPending.requestId && message.role === "user");
+                const restoredMessages = restoredPending && !hasSavedUserMessage
+                    ? [...loaded, { id: `pending-${restoredPending.requestId}`, role: "user", content: restoredPending.content, created_at: restoredPending.createdAt }]
+                    : loaded;
+                setMessages(restoredMessages);
+                if (restoredPending) setError("هذه الرسالة ما زالت بانتظار رد. أعد المحاولة قبل إرسال رسالة أخرى.");
+            }
         } catch (loadError) {
             if (loadError.code !== "ERR_CANCELED" && selectedRef.current?.id === conversation.id) {
                 setError(errorMessage(loadError, "تعذر تحميل رسائل المحادثة."));
@@ -69,7 +105,7 @@ export default function Chat() {
         } finally {
             if (selectedRef.current?.id === conversation.id) setIsLoadingMessages(false);
         }
-    }, []);
+    }, [user.id]);
 
     const loadConversations = useCallback(async (signal) => {
         setIsLoadingConversations(true);
@@ -96,6 +132,10 @@ export default function Chat() {
         return () => controller.abort();
     }, [loadConversations]);
 
+    useEffect(() => {
+        getCurrentPlan().then(setCurrentPlan).catch(() => {});
+    }, []);
+
     async function handleNewConversation() {
         setIsCreating(true);
         setError("");
@@ -112,10 +152,12 @@ export default function Chat() {
 
     async function submitPending(pending) {
         const conversationId = pending.conversationId;
+        sendingConversationIds.current.add(conversationId);
         setIsSending(true);
         setError("");
         try {
             const result = await saveUserMessage(conversationId, { content: pending.content, requestId: pending.requestId });
+            removePending(user.id, conversationId);
             if (selectedRef.current?.id === conversationId) {
                 setMessages((current) => mergeMessages(current, [result.message, result.assistantMessage]));
                 setPendingMessage(null);
@@ -128,32 +170,47 @@ export default function Chat() {
                 setPendingMessage(pending);
             }
         } finally {
+            sendingConversationIds.current.delete(conversationId);
             if (selectedRef.current?.id === conversationId) setIsSending(false);
         }
     }
 
     function handleSend(content) {
-        if (!selected || isSending || isLoadingMessages) return false;
-        const pending = { conversationId: selected.id, content: content.trim(), requestId: crypto.randomUUID() };
+        if (!selected || pendingMessage || isSending || isLoadingMessages) return false;
+        const pending = { conversationId: selected.id, content: content.trim(), requestId: crypto.randomUUID(), createdAt: new Date().toISOString() };
+        savePending(user.id, pending);
         setPendingMessage(pending);
-        setMessages((current) => [...current, { id: `pending-${pending.requestId}`, role: "user", content: pending.content, created_at: new Date().toISOString() }]);
+        setMessages((current) => [...current, { id: `pending-${pending.requestId}`, role: "user", content: pending.content, created_at: pending.createdAt }]);
         submitPending(pending);
         return true;
     }
 
     async function handleAddTask(message) {
         const task = message.suggested_task;
-        const requestId = taskRequestIds.current.get(message.id) || crypto.randomUUID();
-        taskRequestIds.current.set(message.id, requestId);
         setTaskStates((current) => ({ ...current, [message.id]: { status: "loading", error: "" } }));
         try {
-            const plan = await getCurrentPlan();
+            const plan = currentPlan || await getCurrentPlan();
             if (!plan) { navigate("/assessment"); return; }
+            if (!currentPlan) setCurrentPlan(plan);
+            const storageKey = userStorageKey(TASKS_KEY, user.id);
+            const storedTasks = readStored(storageKey);
+            const taskKey = `${plan.id}:${message.id}`;
+            const requestId = storedTasks[taskKey]?.requestId || crypto.randomUUID();
+            storedTasks[taskKey] = { requestId, status: "idle" };
+            localStorage.setItem(storageKey, JSON.stringify(storedTasks));
             await addSuggestedTask(plan.id, { ...task, requestId });
+            storedTasks[taskKey] = { requestId, status: "success" };
+            localStorage.setItem(storageKey, JSON.stringify(storedTasks));
             setTaskStates((current) => ({ ...current, [message.id]: { status: "success", error: "" } }));
         } catch (taskError) {
             setTaskStates((current) => ({ ...current, [message.id]: { status: "error", error: errorMessage(taskError, "تعذرت إضافة المهمة. حاول مرة أخرى.") } }));
         }
+    }
+
+    function getTaskState(messageId) {
+        if (taskStates[messageId]) return taskStates[messageId];
+        if (!currentPlan) return undefined;
+        return readStored(userStorageKey(TASKS_KEY, user.id))[`${currentPlan.id}:${messageId}`];
     }
 
     return (
@@ -171,10 +228,10 @@ export default function Chat() {
                     <MessageList messages={messages} isLoading={isLoadingMessages || isSending} error={error}
                         onRetry={() => pendingMessage ? submitPending(pendingMessage) : loadConversations()}
                         renderAfterMessage={(message) => message.role === "assistant" && message.suggested_task ? (
-                            <SuggestedTask task={message.suggested_task} status={taskStates[message.id]?.status}
-                                error={taskStates[message.id]?.error} onAdd={() => handleAddTask(message)} />
+                            <SuggestedTask task={message.suggested_task} status={getTaskState(message.id)?.status}
+                                error={getTaskState(message.id)?.error} onAdd={() => handleAddTask(message)} />
                         ) : null} />
-                    {selected && <MessageComposer onSend={handleSend} disabled={isSending || isLoadingMessages} />}
+                    {selected && <MessageComposer onSend={handleSend} disabled={Boolean(pendingMessage) || isSending || isLoadingMessages} />}
                 </section>
             </div>
         </main>
