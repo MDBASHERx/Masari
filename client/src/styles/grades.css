@@ -1,0 +1,139 @@
+.grades-page {
+    width: min(100% - 32px, 900px);
+    margin: 32px auto;
+    direction: rtl;
+    text-align: start;
+    color: #24324a;
+}
+
+.grades-page header {
+    margin-bottom: 24px;
+}
+
+.grades-panel {
+    margin-bottom: 24px;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e1e7ef;
+    border-radius: 20px;
+}
+
+.grades-page fieldset {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.grades-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.grades-page label {
+    display: grid;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.grades-page input,
+.grades-page textarea {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #aab7c8;
+    border-radius: 10px;
+    font: inherit;
+    color: inherit;
+    background: #fff;
+}
+
+.grades-page textarea {
+    resize: vertical;
+}
+
+.grades-page button {
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 10px;
+    background: #5b42be;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.grades-page button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.grades-page :focus-visible {
+    outline: 3px solid #0e7490;
+    outline-offset: 3px;
+}
+
+.grades-list {
+    display: grid;
+    gap: 14px;
+}
+
+.grade-card {
+    padding: 18px;
+    border: 1px solid #dce7e3;
+    border-radius: 14px;
+    background: #f2fbf6;
+    overflow-wrap: anywhere;
+}
+
+.grade-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.grade-card h3 {
+    margin: 0;
+}
+
+.grade-card-heading strong {
+    font-size: 1.5rem;
+    color: #176344;
+}
+
+.grades-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.grades-error {
+    color: #a51c30;
+}
+
+.grades-success {
+    color: #176344;
+}
+
+.grades-form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+@media (max-width: 600px) {
+    .grades-form-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .grades-panel {
+        padding: 16px;
+    }
+}

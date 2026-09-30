@@ -1,6 +1,7 @@
 import createUserClient from "../../utils/createUserClient.js";
 import { buildLearnerContext, generateTutorReply } from "../ai/index.js";
 import { saveAssistantReply } from "./saveAssistantReply.js";
+import { withAiCapacity } from "../ai/withAiCapacity.js";
 
 const messageFields = "id, role, content, request_id, suggested_task, created_at";
 
@@ -89,12 +90,14 @@ export const ensureAssistantReply = async ({ userId, accessToken, conversation, 
             accessToken,
         });
 
-        const result = await generateTutorReply({
-            mode: conversation.mode,
-            learner,
-            history: [...history].reverse(),
-            message: userMessage.content,
-        });
+        const result = await withAiCapacity(() =>
+            generateTutorReply({
+                mode: conversation.mode,
+                learner,
+                history: [...history].reverse(),
+                message: userMessage.content,
+            }),
+        );
 
         const reply = await saveAssistantReply({
             userId,
