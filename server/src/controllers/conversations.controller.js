@@ -1,4 +1,6 @@
 import createUserClient from "../utils/createUserClient.js";
+import { ensureAssistantReply } from "../services/chat/ensureAssistantReply.js";
+import { LearningError } from "../services/learning/errors.js";
 
 const conversationFields = "id, title, mode, created_at";
 const messageFields = "id, role, content, request_id, suggested_task, created_at";
@@ -114,6 +116,44 @@ export const listMessages = async (req, res) => {
     });
 };
 
+const respondWithAssistant = async ({ req, res, conversation, userMessage, created }) => {
+    try {
+        const assistant = await ensureAssistantReply({
+            userId: req.user.id,
+            accessToken: req.accessToken,
+            conversation,
+            userMessage,
+        });
+
+        return res.status(created || assistant.created ? 201 : 200).json({
+            success: true,
+            created,
+            message: userMessage,
+            assistantMessage: assistant.message,
+            assistantCreated: assistant.created,
+            isDemo: assistant.isDemo,
+        });
+    } catch (error) {
+        const knownError = error instanceof LearningError;
+
+        if (!knownError)
+        {
+            console.error("Chat reply failed:", error.code ?? error.name);
+        }
+
+        return res.status(knownError ? error.status : 500).json({
+            success: false,
+            code: knownError ? error.code : "CHAT_REPLY_FAILED",
+            message: knownError
+                ? error.message
+                : "Your message was saved, but the reply could not be completed.",
+            userMessageSaved: true,
+            userMessage,
+            requestId: userMessage.request_id,
+        });
+    }
+};
+
 export const saveUserMessage = async (req, res) => {
     const supabase = createUserClient(req.accessToken);
     const { id } = req.validated.params;
@@ -166,11 +206,12 @@ export const saveUserMessage = async (req, res) => {
             });
         }
 
-        return res.status(200).json({
-            success: true,
+        return respondWithAssistant({
+            req,
+            res,
+            conversation,
+            userMessage: existing,
             created: false,
-            message: existing,
-            aiConnected: false,
         });
     }
 
@@ -179,10 +220,11 @@ export const saveUserMessage = async (req, res) => {
         throw error;
     }
 
-    return res.status(201).json({
-        success: true,
+    return respondWithAssistant({
+        req,
+        res,
+        conversation,
+        userMessage: data,
         created: true,
-        message: data,
-        aiConnected: false,
     });
 };

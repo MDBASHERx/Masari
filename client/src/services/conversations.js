@@ -37,6 +37,9 @@ export const saveUserMessage = async (conversationId, { content, requestId } ) =
             content,
             requestId,
         },
+        {
+            timeout: 60000,
+        },
     );
 
     return data;
