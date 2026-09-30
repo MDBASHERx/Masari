@@ -1,7 +1,7 @@
 import AmbientBackground from "./components/design/AmbientBackground.jsx";
 import SiteHeader from "./components/design/SiteHeader.jsx";
 import { lazy, Suspense } from "react";
-import { Routes, Route, Link } from "react-router";
+import { Routes, Route } from "react-router";
 import { getLocale } from "./locales/locale.js";
 
 import ProtectedRoute from "./components/auth/ProtectedRoute.jsx";
@@ -15,6 +15,7 @@ const Chat = lazy(() => import("./pages/Chat.jsx"));
 const CareerExploration = lazy(() => import("./pages/CareerExploration.jsx"));
 const Grades = lazy(() => import("./pages/grades/Grades.jsx"));
 const Progress = lazy(() => import("./pages/progress/Progress.jsx"));
+const NotFound = lazy(() => import("./pages/NotFound.jsx"));
 
 function App() 
 {
@@ -40,12 +41,7 @@ function App()
                 <Route path="/progress" element={<Progress />} />
             </Route>
 
-        <Route path="*" element={
-            <main className="container">
-                <h1>{locale.page404.title}</h1>
-                <Link to="/">{locale.all.backHome}</Link>
-            </main>
-        }/>
+        <Route path="*" element={<NotFound />} />
         </Routes>
         </Suspense>
         </>

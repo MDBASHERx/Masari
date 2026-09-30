@@ -1,0 +1,29 @@
+.not-found-page { flex: 1; display: grid; place-items: center; padding: 42px 20px 80px; }
+.not-found-card { width: min(100%, 780px); text-align: center; padding: 36px 40px 30px; border: 1px solid white; border-radius: 32px; background: linear-gradient(125deg, #fffdf9ed, #f5effded 60%, #eef8f2ed); box-shadow: 0 18px 65px #7054840c; }
+.not-found-label { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #e9deef; padding: 6px 14px; border-radius: 30px; background: #ffffffb8; color: #80648f; font-size: 12px; }
+.not-found-art { position: relative; width: min(100%, 380px); margin: 25px auto 20px; padding-block: 20px; }
+.not-found-code { position: relative; display: flex; align-items: center; justify-content: center; gap: 13px; font-size: clamp(85px, 13vw, 130px); font-weight: 900; line-height: 1.2; color: #8965bb; letter-spacing: -5px; }
+.not-found-compass { display: grid; place-items: center; width: 115px; height: 115px; border-radius: 50%; background: #e3f2ea; color: #67a18a; box-shadow: inset 0 0 0 8px #f4fbf7; transform: rotate(-12deg); }
+.not-found-orbit { position: absolute; inset: 0 35px; border: 1px dashed #d9c9e7; border-radius: 50%; transform: rotate(-15deg); }
+.not-found-decoration { position: absolute; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 15px; }
+.not-found-decoration--book { top: -9px; right: 8px; background: #e4dbf4; color: #9879b9; transform: rotate(12deg); }
+.not-found-decoration--star { bottom: 0; left: 4px; background: #f9eaca; color: #b18b43; transform: rotate(-15deg); }
+.not-found-trail { width: 75%; margin: 10px auto 0; color: #bba2d0; }
+.not-found-card h1 { color: #483257; font-size: clamp(25px, 4vw, 33px); }
+.not-found-description { margin: 17px auto 24px; color: #7d6c86; font-size: 14px; line-height: 2; }
+#root .not-found-home { text-decoration: none; min-width: 210px; }
+.not-found-shortcuts { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px 24px; margin: 27px 0 23px; }
+.not-found-shortcuts a { display: inline-flex; align-items: center; gap: 7px; padding: 7px 4px; color: #79608e; font-size: 12px; text-decoration: none; }
+.not-found-shortcuts a:hover { color: #55357c; text-decoration: underline; }
+.not-found-note { padding-top: 20px; border-top: 1px solid #e7dfed; color: #897692; font-size: 11px; }
+@media (max-width: 480px) {
+    .not-found-page { padding: 25px 16px 70px; }
+    .not-found-card { padding: 26px 18px; border-radius: 24px; }
+    .not-found-art { margin-block: 28px 22px; }
+    .not-found-code { gap: 7px; }
+    .not-found-compass { width: 82px; height: 82px; }
+    .not-found-compass svg { width: 68px; height: 68px; }
+    .not-found-decoration { width: 35px; height: 35px; border-radius: 11px; }
+    .not-found-description { font-size: 13px; }
+    .not-found-shortcuts { gap: 5px 15px; }
+}
