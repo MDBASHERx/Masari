@@ -2,12 +2,10 @@ import { z } from "zod";
 
 export const attemptIdSchema = z.uuid();
 
-// Only diagnostics for now; practice attempts come in a later PR
-export const startAttemptSchema = z
-    .object({
-        type: z.literal("diagnostic"),
-    })
-    .strict();
+export const startAttemptSchema = z.discriminatedUnion("type", [
+    z.object({ type: z.literal("diagnostic") }).strict(),
+    z.object({ type: z.literal("practice"), skillId: z.string().trim().min(1).max(50) }).strict(),
+]);
 
 // Answer entries are validated in detail by gradeAttempt()
 export const submitAttemptSchema = z

@@ -3,6 +3,7 @@ import { LearningError } from "../src/services/learning/errors.js";
 
 const service = vi.hoisted(() => ({
     startDiagnostic: vi.fn(),
+    startPractice: vi.fn(),
     getAttempt: vi.fn(),
     submitAttempt: vi.fn(),
 }));
@@ -59,6 +60,21 @@ describe("attempts routes", () => {
         const resumed = await call("", { method: "POST", body: { type: "diagnostic" } });
         expect(resumed.status).toBe(200);
         expect(resumed.body.resumed).toBe(true);
+    });
+
+    it("starts practice on a skill", async () => {
+        service.startPractice.mockResolvedValueOnce({ attempt: { id: ATTEMPT_ID }, resumed: false });
+        const res = await call("", { method: "POST", body: { type: "practice", skillId: "equations" } });
+
+        expect(res.status).toBe(201);
+        expect(service.startPractice.mock.calls[0][0]).toMatchObject({ skillId: "equations" });
+        expect(service.startDiagnostic).not.toHaveBeenCalled();
+    });
+
+    it("requires a skill for practice and none for diagnostics", async () => {
+        expect((await call("", { method: "POST", body: { type: "practice" } })).status).toBe(400);
+        expect((await call("", { method: "POST", body: { type: "diagnostic", skillId: "equations" } })).status).toBe(400);
+        expect((await call("", { method: "POST", body: { type: "exam" } })).status).toBe(400);
     });
 
     it("rejects unknown attempt types and extra fields", async () => {

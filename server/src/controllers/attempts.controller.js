@@ -11,10 +11,10 @@ export const startAttempt = async (req, res, next) => {
     if (!body.success) return sendValidationError(res, "Invalid attempt data", body.error);
 
     try {
-        const { attempt, resumed } = await attemptsService.startDiagnostic({
-            userId: req.user.id,
-            accessToken: req.accessToken,
-        });
+        const input = { userId: req.user.id, accessToken: req.accessToken };
+        const { attempt, resumed } = body.data.type === "practice"
+            ? await attemptsService.startPractice({ ...input, skillId: body.data.skillId })
+            : await attemptsService.startDiagnostic(input);
 
         res.set("Cache-Control", "no-store");
         return res.status(resumed ? 200 : 201).json({ success: true, resumed, attempt });

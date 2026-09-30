@@ -5,7 +5,7 @@ const clients = vi.hoisted(() => ({ admin: null, user: null }));
 vi.mock("../src/utils/createAdminClient.js", () => ({ default: () => clients.admin }));
 vi.mock("../src/utils/createUserClient.js", () => ({ default: () => clients.user }));
 
-const { startDiagnostic, submitAttempt, formatAttempt } = await import("../src/services/attempts.service.js");
+const { startDiagnostic, startPractice, submitAttempt, formatAttempt, PRACTICE_QUESTIONS } = await import("../src/services/attempts.service.js");
 
 const STUDENT_A = "11111111-1111-1111-1111-111111111111";
 const STUDENT_B = "22222222-2222-2222-2222-222222222222";
@@ -193,6 +193,56 @@ describe("formatAttempt", () => {
             expect(question).not.toHaveProperty("isCorrect");
             expect(question).not.toHaveProperty("correctOption");
         }
+    });
+});
+
+describe("startPractice", () => {
+    const QUESTIONS = ["eq-1", "eq-2", "eq-3", "eq-4"].map((id, i) => ({
+        id, skill_id: "equations", difficulty: i < 2 ? 1 : 2, is_active: true,
+    }));
+
+    it("creates practice on one skill, least-seen questions first", async () => {
+        clients.admin = fakeClient({
+            tables: { attempts: [] },
+            rpc: { start_attempt: async () => ({ data: ATTEMPT_ID, error: null }) },
+        });
+        clients.user = fakeClient({
+            tables: {
+                skills: [{ id: "equations" }],
+                questions: QUESTIONS,
+                // eq-1 and eq-2 were in the diagnostic
+                attempt_items: [{ question_id: "eq-1" }, { question_id: "eq-2" }],
+                attempts: [openAttempt({ type: "practice", skill_id: "equations" })],
+            },
+        });
+
+        const { resumed } = await startPractice({ userId: STUDENT_A, accessToken: "t", skillId: "equations" });
+
+        const args = clients.admin.rpc.mock.calls[0][1];
+        expect(resumed).toBe(false);
+        expect(args).toMatchObject({ p_type: "practice", p_skill_id: "equations", p_user_id: STUDENT_A });
+        expect(args.p_question_ids).toEqual(["eq-3", "eq-4", "eq-1"]);
+        expect(args.p_question_ids).toHaveLength(PRACTICE_QUESTIONS);
+    });
+
+    it("resumes the open practice for the same skill", async () => {
+        const open = openAttempt({ type: "practice", skill_id: "equations" });
+        clients.admin = fakeClient({ tables: { attempts: [open] } });
+        clients.user = fakeClient({ tables: { attempts: [open] } });
+
+        const { resumed } = await startPractice({ userId: STUDENT_A, accessToken: "t", skillId: "equations" });
+
+        expect(resumed).toBe(true);
+        expect(clients.admin.rpc).not.toHaveBeenCalled();
+    });
+
+    it("rejects a skill that does not exist", async () => {
+        clients.admin = fakeClient({ tables: { attempts: [] } });
+        clients.user = fakeClient({ tables: { skills: [], questions: [], attempt_items: [] } });
+
+        await expect(startPractice({ userId: STUDENT_A, accessToken: "t", skillId: "chemistry" }))
+            .rejects.toMatchObject({ status: 400 });
+        expect(clients.admin.rpc).not.toHaveBeenCalled();
     });
 });
 
