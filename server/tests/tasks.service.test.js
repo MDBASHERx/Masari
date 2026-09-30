@@ -5,8 +5,9 @@ const clients = vi.hoisted(() => ({ admin: null, user: null }));
 vi.mock("../src/utils/createAdminClient.js", () => ({ default: () => clients.admin }));
 vi.mock("../src/utils/createUserClient.js", () => ({ default: () => clients.user }));
 
-const { addSuggestedTask, updateTaskStatus, MAX_TASKS_PER_PLAN } =
-    await import("../src/services/tasks.service.js");
+const { addSuggestedTask, updateTaskStatus } = await import("../src/services/tasks.service.js");
+
+const MAX_TASKS = 20;
 
 const STUDENT_A = "11111111-1111-1111-1111-111111111111";
 const PLAN_ID = "bbbbbbbb-0000-4000-8000-000000000001";
@@ -37,15 +38,19 @@ describe("addSuggestedTask", () => {
 
         clients.admin = fakeClient({
             rpc: {
+                // Behaves like the database function: retry first, then the limit
                 add_plan_task: async (args) => {
                     const existing = tasks.find((t) => t.request_id === args.p_request_id);
-                    if (existing) return { data: { taskId: existing.id, created: false }, error: null };
+                    if (existing) return { data: { taskId: existing.id, created: false, planFull: false }, error: null };
+                    if (tasks.length >= MAX_TASKS) {
+                        return { data: { taskId: null, created: false, planFull: true, maxTasks: MAX_TASKS }, error: null };
+                    }
                     const row = taskRow(`task-${tasks.length + 1}`, {
                         skill_id: args.p_skill_id, title: args.p_title,
                         minutes: args.p_minutes, request_id: args.p_request_id,
                     });
                     tasks.push(row);
-                    return { data: { taskId: row.id, created: true }, error: null };
+                    return { data: { taskId: row.id, created: true, planFull: false }, error: null };
                 },
             },
         });
@@ -94,9 +99,9 @@ describe("addSuggestedTask", () => {
         expect(clients.admin.rpc).not.toHaveBeenCalled();
     });
 
-    it("refuses a new task when the plan is full, but still accepts a retry", async () => {
+    it("returns 409 when the database reports the plan is full, but still accepts a retry", async () => {
         await add(); // request-0001 is now in the plan
-        for (let i = tasks.length; i < MAX_TASKS_PER_PLAN; i += 1) {
+        for (let i = tasks.length; i < MAX_TASKS; i += 1) {
             tasks.push(taskRow(`filler-${i}`, { request_id: `filler-${i}` }));
         }
 

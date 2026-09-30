@@ -4,7 +4,6 @@ import { LearningError } from "../src/services/learning/errors.js";
 const service = vi.hoisted(() => ({
     addSuggestedTask: vi.fn(),
     updateTaskStatus: vi.fn(),
-    MAX_TASKS_PER_PLAN: 20,
 }));
 vi.mock("../src/services/tasks.service.js", () => service);
 

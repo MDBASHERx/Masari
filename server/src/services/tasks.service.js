@@ -3,8 +3,6 @@ import createUserClient from "../utils/createUserClient.js";
 import { LearningError } from "./learning/errors.js";
 import { formatTask } from "./plans.service.js";
 
-export const MAX_TASKS_PER_PLAN = 20;
-
 const TASK_SELECT = "id, skill_id, title, minutes, status, position, reason, source, skills ( name )";
 
 /**
@@ -17,7 +15,7 @@ export async function addSuggestedTask({ userId, accessToken, planId, title, ski
     // Read through RLS: 404 if the plan is not the student's
     const { data: plan, error: planError } = await supabase
         .from("learning_plans")
-        .select("id, is_current, plan_tasks ( id, request_id )")
+        .select("id, is_current")
         .eq("id", planId)
         .maybeSingle();
 
@@ -25,11 +23,6 @@ export async function addSuggestedTask({ userId, accessToken, planId, title, ski
     if (!plan) throw new LearningError("PLAN_NOT_FOUND", "Plan not found", 404);
     if (!plan.is_current) {
         throw new LearningError("PLAN_NOT_CURRENT", "Tasks can only be added to the current plan", 409);
-    }
-
-    const isRetry = plan.plan_tasks.some((task) => task.request_id === requestId);
-    if (!isRetry && plan.plan_tasks.length >= MAX_TASKS_PER_PLAN) {
-        throw new LearningError("PLAN_FULL", `A plan can have at most ${MAX_TASKS_PER_PLAN} tasks`, 409);
     }
 
     // The AI may suggest a skill that does not exist: never trust it
@@ -51,6 +44,12 @@ export async function addSuggestedTask({ userId, accessToken, planId, title, ski
         p_request_id: requestId,
     });
     if (error) throw error;
+
+    // The task limit is enforced inside add_plan_task, under the per-student
+    // lock, so concurrent requests cannot go over it (migration 20260929160000)
+    if (data.planFull) {
+        throw new LearningError("PLAN_FULL", `A plan can have at most ${data.maxTasks} tasks`, 409);
+    }
 
     return {
         task: await getTask({ accessToken, taskId: data.taskId }),
