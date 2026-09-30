@@ -43,6 +43,7 @@ function Home()
             <p>{locale.home.description}</p>
             <Link to="/profile">{locale.profile.title}</Link>
             <Link to="/assessment">{locale.assessment.start}</Link>
+            <Link to="/learning-path">{locale.learningPath.title}</Link>
 
             <p className={`server-status server-status--${serverStatus}`} role="status">
             {locale.server[serverStatus]}

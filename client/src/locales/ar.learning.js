@@ -36,6 +36,33 @@ const learning = {
         creatingPlan: "جارٍ بناء خطتك…",
     },
 
+    practice: {
+        title: (skill) => `تدريب: ${skill}`,
+        description: "أسئلة قصيرة على هذه المهارة، ونبدأ بالأسئلة التي لم ترها من قبل.",
+        factQuestions: "3 أسئلة",
+        factTime: "حوالي 3 دقائق",
+        start: "ابدأ التدريب",
+        backToPlan: "العودة إلى خطتي",
+    },
+
+    learningPath: {
+        title: "خطتي",
+        intro: "رتّبنا المهام حسب نتيجتك: نبدأ بالمهارات التي تحتاجها أولاً. بجانب كل مهمة سبب ترتيبها.",
+        loading: "جارٍ تحميل خطتك…",
+        empty: "لا توجد خطة بعد. ابدأ بالتشخيص القصير لنبني لك خطة تناسبك.",
+        retry: "أعد المحاولة",
+        doneOf: (done, total) => `أنجزت ${done} من ${total}`,
+        totalTime: (minutes) => `المدة الكلية: ${minutes} دقيقة`,
+        progressLabel: "تقدّمك في الخطة",
+        minutes: (minutes) => `${minutes} دقيقة`,
+        whyHere: "لماذا هنا؟",
+        fromChat: "من المحادثة",
+        practice: "تدرّب",
+        markDone: "أنجزتها",
+        saving: "جارٍ الحفظ…",
+        masteryNote: "إنجاز المهمة لا يعني إتقان المهارة. تقدّمك يُحسب من نتائج التدريب.",
+    },
+
     learningErrors: {
         sessionExpired: "انتهت جلستك. سجّل الدخول مجددًا.",
         alreadySubmitted: "تم تسليم هذا التشخيص من قبل.",

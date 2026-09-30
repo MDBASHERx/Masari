@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import QuestionCard from "../../components/assessment/QuestionCard.jsx";
 import ResultSummary from "../../components/assessment/ResultSummary.jsx";
 import {
@@ -7,15 +7,23 @@ import {
     createPlan,
     learningErrorKey,
     startDiagnostic,
+    startPractice,
     submitAttempt,
 } from "../../services/learning.js";
 import { getLocale } from "../../locales/locale.js";
 import "../../styles/assessment.css";
+import "../../styles/learningPath.css";
 
-// Screen flow: intro -> answering -> result
+// Screen flow: intro -> answering -> result.
+// /assessment is the diagnostic; /assessment?skill=<id> is practice on one skill.
 function Assessment() {
     const locale = getLocale();
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
+
+    const requestedSkill = searchParams.get("skill");
+    const practiceSkill = requestedSkill && locale.skills[requestedSkill] ? requestedSkill : null;
+    const skillName = practiceSkill && locale.skills[practiceSkill];
 
     const [attempt, setAttempt] = useState(null);
     const [answers, setAnswers] = useState({}); // questionId -> option index
@@ -34,7 +42,7 @@ function Assessment() {
         setError("");
 
         try {
-            const started = await startDiagnostic();
+            const started = practiceSkill ? await startPractice(practiceSkill) : await startDiagnostic();
             setAttempt(started);
             setAnswers({});
             setCurrent(0);
@@ -100,22 +108,30 @@ function Assessment() {
         return (
             <main className="assessment-page">
                 <section className="assessment-card" aria-labelledby="assessment-title">
-                    <Link to="/">{locale.all.backHome}</Link>
+                    {practiceSkill
+                        ? <Link to="/learning-path">{locale.practice.backToPlan}</Link>
+                        : <Link to="/">{locale.all.backHome}</Link>}
                     {USE_MOCK_LEARNING && <p className="assessment-mock">{locale.assessment.mockMode}</p>}
 
-                    <h1 id="assessment-title">{locale.assessment.title}</h1>
-                    <p className="assessment-description">{locale.assessment.description}</p>
+                    <h1 id="assessment-title">
+                        {practiceSkill ? locale.practice.title(skillName) : locale.assessment.title}
+                    </h1>
+                    <p className="assessment-description">
+                        {practiceSkill ? locale.practice.description : locale.assessment.description}
+                    </p>
 
                     <ul className="assessment-facts">
-                        <li>{locale.assessment.factQuestions}</li>
-                        <li>{locale.assessment.factTime}</li>
+                        <li>{practiceSkill ? locale.practice.factQuestions : locale.assessment.factQuestions}</li>
+                        <li>{practiceSkill ? locale.practice.factTime : locale.assessment.factTime}</li>
                         <li>{locale.assessment.factNoMarks}</li>
                     </ul>
 
                     {errorMessage}
 
                     <button className="assessment-button" type="button" onClick={handleStart} disabled={starting}>
-                        {starting ? locale.assessment.starting : locale.assessment.start}
+                        {starting
+                            ? locale.assessment.starting
+                            : practiceSkill ? locale.practice.start : locale.assessment.start}
                     </button>
                 </section>
             </main>
@@ -134,14 +150,20 @@ function Assessment() {
 
                     {errorMessage}
 
-                    <button
-                        className="assessment-button"
-                        type="button"
-                        onClick={handleCreatePlan}
-                        disabled={creatingPlan}
-                    >
-                        {creatingPlan ? locale.assessment.creatingPlan : locale.assessment.createPlan}
-                    </button>
+                    {attempt.type === "practice" ? (
+                        <Link className="assessment-button plan-link-button" to="/learning-path">
+                            {locale.practice.backToPlan}
+                        </Link>
+                    ) : (
+                        <button
+                            className="assessment-button"
+                            type="button"
+                            onClick={handleCreatePlan}
+                            disabled={creatingPlan}
+                        >
+                            {creatingPlan ? locale.assessment.creatingPlan : locale.assessment.createPlan}
+                        </button>
+                    )}
                 </section>
             </main>
         );
