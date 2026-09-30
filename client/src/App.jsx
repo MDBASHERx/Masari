@@ -6,6 +6,7 @@ import Home from "./pages/Home.jsx";
 import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import Profile from "./pages/profile/Profile.jsx";
+import Assessment from "./pages/assessment/Assessment.jsx";
 
 function App() 
 {
@@ -19,6 +20,7 @@ function App()
             <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
+                <Route path="/assessment" element={<Assessment />} />
             </Route>
 
         <Route path="*" element={

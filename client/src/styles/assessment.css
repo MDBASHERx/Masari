@@ -1,0 +1,237 @@
+/* Assessment screen. Uses the design tokens from App.css. */
+
+.assessment-page {
+    flex: 1;
+    padding: 32px 16px;
+}
+
+.assessment-card {
+    display: grid;
+    gap: 20px;
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    padding: clamp(20px, 5vw, 40px);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.assessment-description,
+.result-summary__note {
+    color: var(--color-text-muted);
+}
+
+.assessment-mock {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-yellow);
+    color: var(--color-warning);
+    font-size: 0.9rem;
+}
+
+.assessment-facts {
+    display: grid;
+    gap: 10px;
+    list-style: none;
+}
+
+.assessment-facts li {
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-sky);
+}
+
+.assessment-error {
+    color: var(--color-error);
+    font-weight: 600;
+}
+
+.assessment-hint {
+    color: var(--color-warning);
+}
+
+/* ---------- Buttons ---------- */
+
+.assessment-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+}
+
+.assessment-button {
+    min-height: 48px;
+    padding: 12px 24px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.assessment-button:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+}
+
+.assessment-button--secondary {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.assessment-button--secondary:hover:not(:disabled) {
+    background-color: var(--color-background);
+}
+
+.assessment-button:focus-visible,
+.question-option:has(input:focus-visible) {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+/* ---------- Question ---------- */
+
+.question-card {
+    display: grid;
+    gap: 16px;
+    border: 0;
+    min-inline-size: 0;
+}
+
+.question-card__meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+}
+
+.question-card__skill {
+    padding: 2px 12px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-mint);
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.question-card__progress,
+.skill-result__bar {
+    height: 8px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-border);
+    overflow: hidden;
+}
+
+.question-card__progress span,
+.skill-result__bar span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--color-primary);
+    transition: inline-size 0.3s ease;
+}
+
+.question-card__prompt {
+    float: inline-start; /* lets the legend sit inside the grid */
+    inline-size: 100%;
+    margin-block: 8px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    line-height: 1.8;
+}
+
+.question-card__options {
+    display: grid;
+    gap: 12px;
+}
+
+.question-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 52px;
+    padding: 12px 16px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.question-option:hover {
+    border-color: var(--color-primary);
+}
+
+.question-option--selected {
+    border-color: var(--color-primary);
+    background-color: var(--color-sky);
+}
+
+.question-option input {
+    inline-size: 20px;
+    block-size: 20px;
+    accent-color: var(--color-primary);
+}
+
+/* ---------- Result ---------- */
+
+.result-summary {
+    display: grid;
+    gap: 20px;
+}
+
+.result-summary__score strong {
+    margin-inline-start: 8px;
+    color: var(--color-primary);
+    font-size: 1.6rem;
+}
+
+.result-summary__skills {
+    display: grid;
+    gap: 16px;
+    list-style: none;
+}
+
+.skill-result {
+    display: grid;
+    gap: 8px;
+}
+
+.skill-result__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.skill-result__name {
+    font-weight: 700;
+}
+
+.skill-result__badge {
+    padding: 2px 12px;
+    border-radius: var(--radius-full);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.skill-result__badge--strong {
+    background-color: var(--color-mint);
+    color: var(--color-success);
+}
+
+.skill-result__badge--practice {
+    background-color: var(--color-yellow);
+    color: var(--color-warning);
+}
+
+@media (max-width: 480px) {
+    .assessment-actions {
+        flex-direction: column-reverse;
+    }
+
+    .assessment-button {
+        inline-size: 100%;
+    }
+}
