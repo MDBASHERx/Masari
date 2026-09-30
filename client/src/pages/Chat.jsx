@@ -13,7 +13,9 @@ import "../styles/chat.css";
 const PAGE_SIZE = 30;
 const SELECTED_KEY = "my-coach:selected-conversation";
 const PENDING_KEY = "my-coach:pending-messages";
+const REJECTED_KEY = "my-coach:rejected-message-drafts";
 const TASKS_KEY = "my-coach:suggested-tasks";
+const MAX_MESSAGE_LENGTH = 2000;
 const errorMessage = (error, fallback) => error.response?.data?.message || fallback;
 
 function readStored(key) {
@@ -25,6 +27,16 @@ function userStorageKey(prefix, userId) {
     return `${prefix}:${userId}`;
 }
 
+function taskStorageKey(userId, planId, messageId) {
+    return `${TASKS_KEY}:${userId}:${planId}:${messageId}`;
+}
+
+function isPermanentRejection(error) {
+    const status = error.response?.status;
+    const saved = error.response?.data?.userMessageSaved;
+    return !saved && status >= 400 && status < 500 && status !== 408 && status !== 429;
+}
+
 function savePending(userId, pending) {
     const key = userStorageKey(PENDING_KEY, userId);
     const stored = readStored(key);
@@ -34,6 +46,20 @@ function savePending(userId, pending) {
 
 function removePending(userId, conversationId) {
     const key = userStorageKey(PENDING_KEY, userId);
+    const stored = readStored(key);
+    delete stored[conversationId];
+    localStorage.setItem(key, JSON.stringify(stored));
+}
+
+function saveRejectedDraft(userId, pending) {
+    const key = userStorageKey(REJECTED_KEY, userId);
+    const stored = readStored(key);
+    stored[pending.conversationId] = pending.content;
+    localStorage.setItem(key, JSON.stringify(stored));
+}
+
+function removeRejectedDraft(userId, conversationId) {
+    const key = userStorageKey(REJECTED_KEY, userId);
     const stored = readStored(key);
     delete stored[conversationId];
     localStorage.setItem(key, JSON.stringify(stored));
@@ -69,7 +95,10 @@ export default function Chat() {
     const [isCreating, setIsCreating] = useState(false);
     const [isSending, setIsSending] = useState(false);
     const [error, setError] = useState("");
+    const [errorRetryable, setErrorRetryable] = useState(true);
     const [pendingMessage, setPendingMessage] = useState(null);
+    const [composerText, setComposerText] = useState("");
+    const [hasRejectedDraft, setHasRejectedDraft] = useState(false);
     const [taskStates, setTaskStates] = useState({});
     const [currentPlan, setCurrentPlan] = useState(null);
     const sendingConversationIds = useRef(new Set());
@@ -80,6 +109,10 @@ export default function Chat() {
         setMode(conversation.mode);
         setMessages([]);
         setError("");
+        setErrorRetryable(true);
+        const rejectedDraft = readStored(userStorageKey(REJECTED_KEY, user.id))[conversation.id] || "";
+        setComposerText(rejectedDraft);
+        setHasRejectedDraft(Boolean(rejectedDraft));
         const restoredPending = readStored(userStorageKey(PENDING_KEY, user.id))[conversation.id] || null;
         setPendingMessage(restoredPending);
         setIsSending(sendingConversationIds.current.has(conversation.id));
@@ -96,7 +129,13 @@ export default function Chat() {
                     ? [...loaded, { id: `pending-${restoredPending.requestId}`, role: "user", content: restoredPending.content, created_at: restoredPending.createdAt }]
                     : loaded;
                 setMessages(restoredMessages);
-                if (restoredPending) setError("هذه الرسالة ما زالت بانتظار رد. أعد المحاولة قبل إرسال رسالة أخرى.");
+                if (restoredPending) {
+                    setErrorRetryable(true);
+                    setError("هذه الرسالة ما زالت بانتظار رد. أعد المحاولة قبل إرسال رسالة أخرى.");
+                } else if (rejectedDraft) {
+                    setErrorRetryable(false);
+                    setError("رُفضت الرسالة السابقة. صحّحها أو ألغها ثم حاول مجددًا.");
+                }
             }
         } catch (loadError) {
             if (loadError.code !== "ERR_CANCELED" && selectedRef.current?.id === conversation.id) {
@@ -155,6 +194,7 @@ export default function Chat() {
         sendingConversationIds.current.add(conversationId);
         setIsSending(true);
         setError("");
+        setErrorRetryable(true);
         try {
             const result = await saveUserMessage(conversationId, { content: pending.content, requestId: pending.requestId });
             removePending(user.id, conversationId);
@@ -164,10 +204,25 @@ export default function Chat() {
             }
         } catch (sendError) {
             const savedMessage = sendError.response?.data?.userMessage;
+            const permanentlyRejected = isPermanentRejection(sendError);
+            if (permanentlyRejected) {
+                removePending(user.id, conversationId);
+                saveRejectedDraft(user.id, pending);
+            }
             if (savedMessage && selectedRef.current?.id === conversationId) setMessages((current) => mergeMessages(current, [savedMessage]));
             if (selectedRef.current?.id === conversationId) {
-                setError(errorMessage(sendError, "تعذر الحصول على رد. احتفظنا بالرسالة لإعادة المحاولة."));
-                setPendingMessage(pending);
+                if (permanentlyRejected) {
+                    setMessages((current) => current.filter((message) => message.id !== `pending-${pending.requestId}`));
+                    setPendingMessage(null);
+                    setComposerText(pending.content);
+                    setHasRejectedDraft(true);
+                    setErrorRetryable(false);
+                    setError("رُفضت الرسالة ولم تُحفظ. صحّحها أو ألغها ثم حاول مجددًا.");
+                } else {
+                    setErrorRetryable(true);
+                    setError(errorMessage(sendError, "تعذر الحصول على رد. احتفظنا بالرسالة لإعادة المحاولة."));
+                    setPendingMessage(pending);
+                }
             }
         } finally {
             sendingConversationIds.current.delete(conversationId);
@@ -177,7 +232,15 @@ export default function Chat() {
 
     function handleSend(content) {
         if (!selected || pendingMessage || isSending || isLoadingMessages) return false;
-        const pending = { conversationId: selected.id, content: content.trim(), requestId: crypto.randomUUID(), createdAt: new Date().toISOString() };
+        const trimmedContent = content.trim();
+        if (!trimmedContent || trimmedContent.length > MAX_MESSAGE_LENGTH) {
+            setErrorRetryable(false);
+            setError(`يجب ألا تتجاوز الرسالة ${MAX_MESSAGE_LENGTH} حرفًا.`);
+            return false;
+        }
+        setHasRejectedDraft(false);
+        removeRejectedDraft(user.id, selected.id);
+        const pending = { conversationId: selected.id, content: trimmedContent, requestId: crypto.randomUUID(), createdAt: new Date().toISOString() };
         savePending(user.id, pending);
         setPendingMessage(pending);
         setMessages((current) => [...current, { id: `pending-${pending.requestId}`, role: "user", content: pending.content, created_at: pending.createdAt }]);
@@ -192,15 +255,12 @@ export default function Chat() {
             const plan = currentPlan || await getCurrentPlan();
             if (!plan) { navigate("/assessment"); return; }
             if (!currentPlan) setCurrentPlan(plan);
-            const storageKey = userStorageKey(TASKS_KEY, user.id);
-            const storedTasks = readStored(storageKey);
-            const taskKey = `${plan.id}:${message.id}`;
-            const requestId = storedTasks[taskKey]?.requestId || crypto.randomUUID();
-            storedTasks[taskKey] = { requestId, status: "idle" };
-            localStorage.setItem(storageKey, JSON.stringify(storedTasks));
+            const storageKey = taskStorageKey(user.id, plan.id, message.id);
+            const storedTask = readStored(storageKey);
+            const requestId = storedTask.requestId || crypto.randomUUID();
+            localStorage.setItem(storageKey, JSON.stringify({ requestId, status: "idle" }));
             await addSuggestedTask(plan.id, { ...task, requestId });
-            storedTasks[taskKey] = { requestId, status: "success" };
-            localStorage.setItem(storageKey, JSON.stringify(storedTasks));
+            localStorage.setItem(storageKey, JSON.stringify({ requestId, status: "success" }));
             setTaskStates((current) => ({ ...current, [message.id]: { status: "success", error: "" } }));
         } catch (taskError) {
             setTaskStates((current) => ({ ...current, [message.id]: { status: "error", error: errorMessage(taskError, "تعذرت إضافة المهمة. حاول مرة أخرى.") } }));
@@ -210,7 +270,7 @@ export default function Chat() {
     function getTaskState(messageId) {
         if (taskStates[messageId]) return taskStates[messageId];
         if (!currentPlan) return undefined;
-        return readStored(userStorageKey(TASKS_KEY, user.id))[`${currentPlan.id}:${messageId}`];
+        return readStored(taskStorageKey(user.id, currentPlan.id, messageId));
     }
 
     return (
@@ -227,11 +287,15 @@ export default function Chat() {
                     {selected && <h2>{selected.title} · {selected.mode === "tutor" ? "معلم" : "مرشد"}</h2>}
                     <MessageList messages={messages} isLoading={isLoadingMessages || isSending} error={error}
                         onRetry={() => pendingMessage ? submitPending(pendingMessage) : loadConversations()}
+                        canRetry={errorRetryable}
+                        onDismiss={() => setError("")}
                         renderAfterMessage={(message) => message.role === "assistant" && message.suggested_task ? (
                             <SuggestedTask task={message.suggested_task} status={getTaskState(message.id)?.status}
                                 error={getTaskState(message.id)?.error} onAdd={() => handleAddTask(message)} />
                         ) : null} />
-                    {selected && <MessageComposer onSend={handleSend} disabled={Boolean(pendingMessage) || isSending || isLoadingMessages} />}
+                    {selected && <MessageComposer text={composerText} onTextChange={setComposerText} onSend={handleSend}
+                        onCancel={hasRejectedDraft ? () => { removeRejectedDraft(user.id, selected.id); setComposerText(""); setHasRejectedDraft(false); setError(""); } : undefined}
+                        maxLength={MAX_MESSAGE_LENGTH} disabled={Boolean(pendingMessage) || isSending || isLoadingMessages} />}
                 </section>
             </div>
         </main>

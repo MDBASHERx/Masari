@@ -6,6 +6,8 @@ function MessageList({
   isLoading,
   error,
   onRetry,
+  canRetry = true,
+  onDismiss,
   renderAfterMessage,
 }) {
   if (
@@ -33,9 +35,8 @@ function MessageList({
         <div role="alert">
           <p>{error}</p>
 
-          <button onClick={onRetry}>
-            إعادة المحاولة
-          </button>
+          {canRetry && <button onClick={onRetry}>إعادة المحاولة</button>}
+          {!canRetry && onDismiss && <button onClick={onDismiss}>إخفاء الخطأ</button>}
         </div>
       )}
     </div>

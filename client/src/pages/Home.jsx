@@ -46,6 +46,7 @@ function Home()
             <Link to="/learning-path">{locale.learningPath.title}</Link>
             <Link to="/chat">المحادثة مع المعلم أو المرشد</Link>
             <Link to="/future">استكشف المسارات المهنية</Link>
+            <Link to="/progress">{locale.progress.title}</Link>
 
             <p className={`server-status server-status--${serverStatus}`} role="status">
             {locale.server[serverStatus]}

@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-function MessageComposer({ onSend, disabled = false }) {
-  const [text, setText] = useState("");
-
+function MessageComposer({ text, onTextChange, onSend, onCancel, disabled = false, maxLength = 2000 }) {
   function handleSubmit(e) {
     e.preventDefault();
 
@@ -10,7 +6,7 @@ function MessageComposer({ onSend, disabled = false }) {
       return;
     }
 
-    if (onSend(text) !== false) setText("");
+    if (onSend(text) !== false) onTextChange("");
   }
 
   return (
@@ -19,11 +15,15 @@ function MessageComposer({ onSend, disabled = false }) {
         type="text"
         placeholder="اكتب رسالتك..."
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => onTextChange(e.target.value)}
         disabled={disabled}
+        maxLength={maxLength}
+        aria-describedby="message-length"
       />
 
-      <button type="submit" disabled={disabled}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
+      <span id="message-length">{text.length} / {maxLength}</span>
+      <button type="submit" disabled={disabled || !text.trim()}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
+      {onCancel && <button type="button" onClick={onCancel}>إلغاء الرسالة المرفوضة</button>}
     </form>
   );
 }
