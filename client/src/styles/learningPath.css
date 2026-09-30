@@ -1,0 +1,142 @@
+/* Learning path screen. Builds on assessment.css and the tokens in App.css. */
+
+.plan-summary {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.plan-link-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.task-list {
+    display: grid;
+    gap: 16px;
+    list-style: none;
+}
+
+.task-card {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background-color: var(--color-surface);
+}
+
+.task-card--done {
+    background-color: var(--color-background);
+}
+
+.task-card--done .task-card__title {
+    color: var(--color-text-muted);
+    text-decoration: line-through;
+}
+
+.task-card__position {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    inline-size: 36px;
+    block-size: 36px;
+    border-radius: var(--radius-full);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.task-card--done .task-card__position {
+    background-color: var(--color-success);
+}
+
+.task-card__body {
+    display: grid;
+    gap: 8px;
+    min-inline-size: 0;
+    flex: 1;
+}
+
+.task-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.task-card__skill,
+.task-card__source {
+    padding: 2px 10px;
+    border-radius: var(--radius-full);
+    font-weight: 600;
+}
+
+.task-card__skill {
+    background-color: var(--color-mint);
+    color: var(--color-success);
+}
+
+.task-card__source {
+    background-color: var(--color-sky);
+    color: var(--color-primary);
+}
+
+.task-card__title {
+    font-size: 1.1rem;
+}
+
+.task-card__reason {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-yellow);
+    color: var(--color-text);
+    font-size: 0.95rem;
+}
+
+.task-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.task-card__practice {
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-primary);
+    color: #ffffff;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.task-card__practice:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.task-card__done {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    cursor: pointer;
+}
+
+.task-card__done input {
+    inline-size: 20px;
+    block-size: 20px;
+    accent-color: var(--color-success);
+}
+
+.task-card__practice:focus-visible,
+.task-card__done:has(input:focus-visible) {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 2px;
+}

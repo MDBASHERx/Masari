@@ -7,6 +7,7 @@ import Login from "./pages/auth/Login.jsx";
 import Register from "./pages/auth/Register.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Assessment from "./pages/assessment/Assessment.jsx";
+import LearningPath from "./pages/learningPath/LearningPath.jsx";
 
 function App() 
 {
@@ -21,6 +22,7 @@ function App()
                 <Route path="/" element={<Home />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/assessment" element={<Assessment />} />
+                <Route path="/learning-path" element={<LearningPath />} />
             </Route>
 
         <Route path="*" element={

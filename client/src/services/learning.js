@@ -32,6 +32,37 @@ export const createPlan = async (attemptId) => {
     return data.plan;
 };
 
+// Guided practice on one skill (3 questions), or resumes the open one
+export const startPractice = async (skillId) => {
+    if (USE_MOCK_LEARNING) return (await loadMock()).startPractice(skillId);
+
+    const { data } = await API.post("/attempts", { type: "practice", skillId });
+
+    return data.attempt;
+};
+
+// The current plan, or null when the student has no plan yet
+export const getCurrentPlan = async (signal) => {
+    if (USE_MOCK_LEARNING) return (await loadMock()).getCurrentPlan();
+
+    try {
+        const { data } = await API.get("/plans/current", { signal });
+        return data.plan;
+    } catch (error) {
+        if (error.response?.data?.code === "PLAN_NOT_FOUND") return null;
+        throw error;
+    }
+};
+
+// Students can change the status only: "todo" | "in_progress" | "done"
+export const updateTaskStatus = async (taskId, status) => {
+    if (USE_MOCK_LEARNING) return (await loadMock()).updateTaskStatus(taskId, status);
+
+    const { data } = await API.patch(`/tasks/${taskId}`, { status });
+
+    return data.task;
+};
+
 // Maps an API error to a key in locale.learningErrors
 export const learningErrorKey = (error) => {
     const status = error.response?.status;
