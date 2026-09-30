@@ -24,7 +24,9 @@ const learning = {
         submit: "إنهاء وعرض النتيجة",
         submitting: "جارٍ التصحيح…",
         unansweredWarning: (count) =>
-            count === 1 ? "بقي سؤال واحد بلا إجابة، وسيُحسب خطأ." : `بقي ${count} أسئلة بلا إجابة، وستُحسب خطأ.`,
+            count === 1
+                ? "بقي سؤال واحد بلا إجابة، وسيُحسب خطأ."
+                : `بقي ${count} أسئلة بلا إجابة، وستُحسب خطأ.`,
 
         resultTitle: "نتيجتك",
         overallScore: "النتيجة الكلية: ",
@@ -34,6 +36,40 @@ const learning = {
         resultNote: "هذه النتيجة تساعدنا في ترتيب خطتك فقط، وهي منفصلة عن علاماتك المدرسية.",
         createPlan: "ابنِ خطتي",
         creatingPlan: "جارٍ بناء خطتك…",
+    },
+
+    progress: {
+        title: "تقدمي",
+        subtitle: "شاهد نتائج التشخيص والتدريب وتقدم خطتك.",
+
+        loading: "جاري تحميل تقدمك...",
+        errorTitle: "تعذر تحميل التقدم",
+        errorMessage: "حدث خطأ أثناء تحميل بيانات التقدم.",
+        retry: "إعادة المحاولة",
+
+        emptyTitle: "ابدأ رحلتك التعليمية",
+        emptyMessage:
+            "لا توجد بيانات تقدم بعد. ابدأ التقييم التشخيصي حتى نتمكن من بناء تقدمك.",
+        startAssessment: "ابدأ التقييم",
+
+        latestDiagnostic: "آخر تشخيص",
+
+        skillsTitle: "المهارات",
+        diagnostic: "التشخيص",
+        practice: "التدريب",
+        practiceAttempts: "مرات التدريب",
+        lastPractice: "آخر تدريب",
+        notStarted: "لم تبدأ بعد",
+        correctAnswers: "الإجابات الصحيحة",
+
+        planTitle: "تقدم الخطة",
+        noPlan: "لا توجد خطة تعلم حالياً.",
+
+        recentAttempts: "آخر المحاولات",
+        noAttempts: "لا توجد محاولات بعد.",
+
+        diagnosticType: "تشخيص",
+        practiceType: "تدريب",
     },
 
     learningErrors: {
