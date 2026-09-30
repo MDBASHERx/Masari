@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Cairo&amp;size=30&amp;pause=1000&amp;color=7950D6&amp;center=true&amp;vCenter=true&amp;width=850&amp;lines=my-coach;AI+Personal+Teacher+%26+Learning+Path;Discover+%7C+Plan+%7C+Learn+%7C+Grow" alt="MY COACH - AI Personal Teacher and Learning Path" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Cairo&amp;size=30&amp;pause=1000&amp;color=7950D6&amp;center=true&amp;vCenter=true&amp;width=850&amp;lines=Masari;AI+Personal+Teacher+%26+Learning+Path;Discover+%7C+Plan+%7C+Learn+%7C+Grow" alt="Masari - AI Personal Teacher and Learning Path" />
 </p>
 
 <p align="center">
@@ -19,9 +19,9 @@
 
 ## 📖 About
 
-**my-coach** is a student-focused platform combining diagnostic assessments, personalized learning paths, an AI tutor, and study guidance.
+**Masari** is a student-focused platform combining diagnostic assessments, personalized learning paths, an AI tutor, and study guidance.
 
-Students often know their marks but do not know which skills need attention or what to study next. my-coach aims to turn that uncertainty into a practical next step.
+Students often know their marks but do not know which skills need attention or what to study next. Masari aims to turn that uncertainty into a practical next step.
 
 A student sets a goal, completes a short assessment, receives a skill-based plan, and learns through guided practice and chat. Their learning history helps shape the next activity.
 
@@ -161,7 +161,7 @@ Start with complete HTTP responses for chat. Streaming can follow after the basi
 ## 📂 Proposed Project Structure
 
 ```text
-my-coach/
+Masari/
 ├── client/
 │   ├── src/
 │   │   ├── components/       # Shared React components (.jsx)
@@ -433,14 +433,14 @@ Update these statuses as implementation progresses.
 
 ## 📚 Documentation
 
-The existing full-stack design document and revised team preparation plan were created under the working name **Masari**. The project is now named **my-coach**.
+The existing full-stack design document and revised team preparation plan were created under the working name **Masari**. The project is now named **Masari**.
 
 Rename/update those documents when adding them to `docs/`, then link their actual repository paths. The latest team allocation above takes precedence over the earlier allocation in the original design document.
 
 ---
 
 <p align="center">
-  <strong>my-coach</strong> · Discover · Plan · Learn · Grow
+  <strong>Masari</strong> · Discover · Plan · Learn · Grow
   <br />
   <em>Your future starts with the next step.</em>
 </p>
