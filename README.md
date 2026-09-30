@@ -1,446 +1,578 @@
+<h1 align="center">Masari | مساري</h1>
+
 <p align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Cairo&amp;size=30&amp;pause=1000&amp;color=7950D6&amp;center=true&amp;vCenter=true&amp;width=850&amp;lines=Masari;AI+Personal+Teacher+%26+Learning+Path;Discover+%7C+Plan+%7C+Learn+%7C+Grow" alt="Masari - AI Personal Teacher and Learning Path" />
+  <strong>مساري — مرشدك المهني لمسارك الصحيح</strong>
 </p>
 
 <p align="center">
-  A personal learning journey that connects a student's goals to their next study step.
-  <br />
-  Arabic-First Learning Experience · Full-Stack Hackathon Project
+  Understand your learning needs, build stronger skills, and explore your future.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Design%20%26%20Prototyping-F59E0B?style=for-the-badge" alt="Design and prototyping" />
-  <img src="https://img.shields.io/badge/Language-JavaScript-F7DF1E?style=for-the-badge&amp;logo=javascript&amp;logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Database-Supabase-3ECF8E?style=for-the-badge&amp;logo=supabase&amp;logoColor=white" alt="Supabase PostgreSQL" />
-  <img src="https://img.shields.io/badge/UI-Arabic%20%2B%20RTL-38BDF8?style=for-the-badge" alt="Arabic and RTL" />
+  AI Tutor · Personalized Learning Plans · Career Exploration
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Status-In%20Development-F59E0B?style=for-the-badge" alt="In Development" />
+  <img src="https://img.shields.io/badge/Language-JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/Frontend-React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
+  <img src="https://img.shields.io/badge/Database-Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
 </p>
 
 ---
 
 ## 📖 About
 
-**Masari** is a student-focused platform combining diagnostic assessments, personalized learning paths, an AI tutor, and study guidance.
+**Masari — مساري** is an Arabic-first learning and career exploration platform built for a hackathon.
 
-Students often know their marks but do not know which skills need attention or what to study next. Masari aims to turn that uncertainty into a practical next step.
+It helps students understand their current skills, follow a personalized learning plan, practice mathematics, track school grades, and explore possible career paths.
 
-A student sets a goal, completes a short assessment, receives a skill-based plan, and learns through guided practice and chat. Their learning history helps shape the next activity.
+An AI assistant supports students through explanations, hints, study guidance, and suggested practice tasks.
 
-> **Development status:** Interactive UI prototypes and design documents have been prepared. Authentication, database integration, persistent chat, and live AI are planned implementation work. Prototype replies and student records are demonstration data, not a working production service.
+Masari provides educational guidance. Its career suggestions are options to explore, not decisions about a student's future.
 
-## 🎯 Version 1 Scope
+> **Development status:** Core learning APIs, authentication, profiles, conversation storage, Gemini integration, and school grade features are implemented in the current development branch. Remaining frontend integration, final acceptance testing, and production deployment are still in progress. Features may reach `main` through separate pull requests.
 
-The first release focuses on **secondary-school students**, **mathematics**, and **one complete learning journey**.
+## 🎯 Hackathon Scope
 
-### Included
+The initial learning content focuses on three mathematics skills:
 
-- Student accounts and learning preferences.
-- Three initial skills: fractions, equations, and percentages.
-- A short diagnostic using reviewed questions.
-- A study plan based on results and available time.
-- Tutor and study-mentor chat modes.
-- Guided practice with server-side grading.
-- Saved conversations, plans, and progress.
-- Self-reported school marks.
-- Initial exploration of engineering and computer science.
+- Fractions
+- Equations
+- Percentages
 
-### Outside the Initial Scope
+Career exploration currently includes:
 
-- Every subject and full curriculum coverage.
-- Parent, teacher, and school administration dashboards.
-- School information-system integrations.
-- Voice chat, OCR, and handwritten-answer grading.
-- Native mobile applications and payments.
-- Autonomous agents with unrestricted database access.
-- Final career decisions or university admission predictions.
+- Engineering
+- Computer Science
 
-Career suggestions are options to explore, not decisions made on behalf of a student.
+Student profiles support grades **1–12**, but the current question bank targets secondary-school mathematics. Supporting a grade in the profile does not mean its full curriculum is available.
 
-## 🔄 Student Journey
+Outside the current scope:
+
+- Complete coverage of every school subject and grade
+- Official school assessments or certified career recommendations
+- Parent, teacher, and school administration dashboards
+- Voice conversations and document uploads
+- Payments and subscriptions
+- Native mobile applications
+
+## ✨ Features and Current Status
+
+| Area | Implemented | Remaining work |
+| --- | --- | --- |
+| Authentication | Supabase registration, login, authenticated requests, and protected frontend routes | Final production authentication checks |
+| Student profile | Name, grade level, learning goal, and daily study time | Final integrated UX review |
+| Diagnostic assessment | Assigned questions, server-side grading, and per-skill results | Full acceptance testing |
+| Learning plans | Plans based on skill results and prerequisites | Final integration testing |
+| Practice and progress | Practice attempts, task updates, and progress API | Complete progress page integration |
+| AI tutoring | Gemini responses, saved conversations, and suggested tasks | Complete chat UI integration and failure-state testing |
+| Career exploration | Curated content and career paths API | Complete career page integration |
+| School grades | Create, list, and update grades, with a frontend form | Confirm the complete editing flow |
+| Deployment | Environment configuration and startup validation | Publish and test the production application |
+
+## 🧭 Student Journey
 
 ```text
 Create an account
-  → Set interests, goal, and daily study time
-  → Complete a diagnostic assessment
-  → Receive a prioritized learning plan
-  → Ask the tutor for an explanation or hint
-  → Complete guided practice
-  → Review saved progress and the next step
+  → Complete your profile
+  → Take a diagnostic assessment
+  → Receive a personalized learning plan
+  → Practice weaker skills
+  → Ask the AI tutor for help
+  → Add useful suggested tasks to your plan
+  → Review progress and school grades
+  → Explore potential career paths
 ```
-
-The primary success condition is a complete journey with persisted data and correct ownership checks.
-
-## ✨ Planned Features
-
-| Feature | Intended behavior |
-| --- | --- |
-| **Authentication** | Register, sign in, and sign out through Supabase Auth |
-| **Learning profile** | Save grade level, interests, goal, time, and explanation preferences |
-| **Diagnostic assessment** | Identify skills needing practice using reviewed questions |
-| **Personal learning path** | Prioritize skills and fit tasks to available time |
-| **AI tutor** | Explain concepts, provide examples, and offer hints |
-| **Study mentor** | Help organize study time and explore future options |
-| **Guided practice** | Grade supported exercises on the server and store results |
-| **Conversation history** | Save and restore the student's own chat sessions |
-| **Chat-to-plan tasks** | Add a suggested task after the student accepts it |
-| **Progress tracking** | Summarize diagnostic results and completed practice |
-| **School marks** | Store manually entered marks separately from practice results |
-| **Career exploration** | Present curated pathways and practical activities |
-| **Responsive UI** | Support Arabic, RTL, keyboard navigation, and mobile layouts |
-
-Completing a task or sending a message does not automatically establish mastery. School marks and diagnostic results remain distinct.
 
 ## 🛠️ Technology Stack
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&amp;logo=react&amp;logoColor=61DAFB" alt="React" />
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&amp;logo=javascript&amp;logoColor=black" alt="JavaScript" />
-  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&amp;logo=vite&amp;logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=for-the-badge&amp;logo=tailwindcss&amp;logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&amp;logo=nodedotjs&amp;logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&amp;logo=express&amp;logoColor=white" alt="Express" />
-  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&amp;logo=supabase&amp;logoColor=white" alt="Supabase" />
-  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&amp;logo=postgresql&amp;logoColor=white" alt="PostgreSQL" />
-</p>
-
-| Layer | Selected technology |
+| Layer | Technology |
 | --- | --- |
-| Frontend | React + JavaScript + Vite |
-| Styling | Tailwind CSS |
+| Language | JavaScript with ES modules |
+| Frontend | React + Vite |
 | Routing | React Router |
-| Server-state management | TanStack Query |
-| Local UI state | React state and context |
-| Backend | Node.js + Express + JavaScript |
-| Database | Supabase PostgreSQL |
+| Frontend state | React hooks and context |
+| Styling | CSS with Arabic and RTL support |
+| HTTP client | Axios |
+| Backend | Node.js + Express |
 | Authentication | Supabase Auth |
+| Database | Supabase PostgreSQL |
+| Data access control | PostgreSQL grants and Row Level Security |
 | Validation | Zod |
-| AI | LLM provider API through Express; provider/model to be selected |
-| Testing | Vitest + Supertest + Playwright |
-| Code quality | ESLint + Prettier |
-| Collaboration | GitHub pull requests |
+| AI provider | Google Gemini |
+| HTTP security | Helmet + CORS |
+| Chat request limits | express-rate-limit |
+| Automated tests | Vitest |
+| Frontend linting | ESLint |
+| Local development | concurrently |
 
-Use **`.js` and `.jsx` files** throughout the project.
+The project uses **JavaScript**, not TypeScript.
 
-### Database Decision
-
-The design uses one PostgreSQL database in Supabase for students, skills, attempts, plans, and conversations. Supabase Auth handles sign-in. Chat history does not require a second database.
-
-Storage, vector search, and realtime subscriptions are optional extensions rather than MVP requirements.
-
-## 🏗️ Planned Architecture
+## 🏗️ Architecture
 
 ```text
-React + JavaScript
+React application
     │
-    ├── Sign-in / session ───────────────► Supabase Auth
+    ├── Supabase Auth
+    │       └── User session and access token
     │
-    └── REST requests + access token
-                    │
-                    ▼
-             Node.js + Express
-                    │
-       Verify session and ownership
-       Validate input and business rules
-                    │
-          ┌─────────┴──────────┐
-          ▼                    ▼
-  Supabase PostgreSQL     LLM Provider API
-  Profiles and attempts   Explanations and hints
-  Plans and messages      Validated suggestions
+    └── Express REST API
+            │
+            ├── Authentication and request validation
+            ├── Ownership checks and learning rules
+            ├── Supabase PostgreSQL
+            │       ├── Student-scoped access with RLS
+            │       └── Restricted server-side operations
+            │
+            └── Google Gemini
+                    └── Validated tutor response
+                            └── Saved assistant message
 ```
 
-- React displays data and captures actions.
-- Express verifies identity, checks ownership, and applies business rules.
-- Ordinary data operations use the student's verified context and row-level security.
-- Answer keys and authoritative grading remain server-controlled.
-- Privileged server access that bypasses RLS still requires explicit ownership checks.
-- The AI provider has no unrestricted database access.
-- The database remains the source of truth.
+- The client sends the student's access token with protected API requests.
+- The backend validates authentication, ownership, and request data.
+- Student-scoped database requests are subject to RLS.
+- Privileged credentials are restricted to the backend.
+- Grading uses server-only answer keys.
+- The backend validates AI output before saving it.
+- The frontend never receives the Gemini API key or Supabase server key.
 
-Start with complete HTTP responses for chat. Streaming can follow after the basic flow works; Socket.IO is not required solely for an AI tutor.
-
-## 📂 Proposed Project Structure
+## 📂 Project Structure
 
 ```text
 Masari/
 ├── client/
 │   ├── src/
-│   │   ├── components/       # Shared React components (.jsx)
-│   │   ├── pages/            # Feature screens (.jsx)
-│   │   ├── hooks/            # React hooks (.js)
-│   │   ├── context/          # Session and shared UI context
-│   │   ├── services/         # API helpers (.js)
-│   │   └── App.jsx
-│   └── .env.example
+│   │   ├── api/
+│   │   ├── context/
+│   │   ├── locales/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── styles/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── .env.example
+│   └── package.json
+│
 ├── server/
+│   ├── scripts/
 │   ├── src/
-│   │   ├── routes/
 │   │   ├── controllers/
-│   │   ├── services/         # Learning rules and AI adapter
-│   │   ├── repositories/     # Database access
-│   │   ├── middleware/       # Authentication and ownership
-│   │   └── validators/
+│   │   ├── data/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── services/
+│   │   │   ├── ai/
+│   │   │   └── chat/
+│   │   ├── utils/
+│   │   ├── validators/
+│   │   ├── app.js
+│   │   └── server.js
 │   ├── tests/
-│   └── .env.example
+│   ├── .env.example
+│   └── package.json
+│
 ├── supabase/
 │   ├── migrations/
+│   ├── tests/
 │   └── seed.sql
+│
 ├── docs/
+│   └── ai-eval/
+│       └── results/
+│
+├── .gitignore
+├── package.json
 └── README.md
 ```
 
-This is the target structure, not a claim that these application files already exist.
+The GitHub repository directory is currently named `Masari`; the product name is **Masari**.
 
-## 🚀 Development Setup Plan
+## 🚀 Getting Started
 
-The runnable repository skeleton and package scripts are still to be finalized.
+### 1. Prerequisites
 
-### Prerequisites
+- Node.js and npm compatible with the project's Vite version
+- A Supabase project
+- A Gemini API key for real AI responses
+- Git
 
-- A supported Node.js LTS release compatible with the selected dependencies.
-- npm and Git.
-- A Supabase development project.
-- Access to the selected AI provider for live chat integration.
+Use a consistent Node.js version across the team.
 
-### Setup Sequence
+### 2. Clone the repository
 
-1. Clone the team's shared repository once available.
-2. Install dependencies using the committed lockfiles and documented scripts.
-3. Copy the environment examples into local environment files.
-4. Configure Supabase and apply reviewed migrations.
-5. Load the reviewed skills, questions, and demonstration data.
-6. Start the client and server with their defined package scripts.
-7. Verify authentication, persistence, and one complete student journey.
+```bash
+git clone https://github.com/MDBASHERx/Masari.git
+cd Masari
+```
 
-Add exact install, seed, start, and test commands after the skeleton is implemented and verified. Commands from another project's README should not be assumed to exist here.
+### 3. Install dependencies
 
-### Proposed Client Environment
+Run from the repository root:
 
-```dotenv
-VITE_API_URL=http://localhost:3000
-VITE_SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+```bash
+npm ci
+npm ci --prefix client
+npm ci --prefix server
+```
+
+### 4. Configure environment files
+
+Copy:
+
+```text
+client/.env.example → client/.env
+server/.env.example → server/.env
+```
+
+Example client configuration:
+
+```ini
+VITE_API_URL=http://localhost:5000/api
+VITE_SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+VITE_USE_MOCK_LEARNING=false
 ```
 
-### Proposed Server Environment
+Example server configuration:
 
-```dotenv
-PORT=3000
-CLIENT_ORIGIN=http://localhost:5173
-SUPABASE_URL=https://YOUR_PROJECT.supabase.co
+```ini
+PORT=5000
+NODE_ENV=development
+
+SUPABASE_URL=https://YOUR_PROJECT_REF.supabase.co
 SUPABASE_PUBLISHABLE_KEY=YOUR_PUBLISHABLE_KEY
+SUPABASE_SERVER_KEY=YOUR_SERVER_SECRET_KEY
 
-# Only if protected server operations need privileged access.
-SUPABASE_SERVER_KEY=YOUR_SERVER_ONLY_KEY
+CLIENT_URL=http://localhost:5173
 
-LLM_API_KEY=YOUR_PROVIDER_KEY
-LLM_MODEL=YOUR_SELECTED_MODEL
+LLM_PROVIDER=gemini
+LLM_API_KEY=YOUR_GEMINI_API_KEY
+LLM_MODEL=gemini-3.5-flash-lite
 AI_TIMEOUT_MS=30000
+AI_MAX_CONCURRENT=2
+
+CHAT_DEMO_ENABLED=false
 ```
 
-Ports and timeout values are proposed local defaults. `SUPABASE_SERVER_KEY` is an application setting name for protected server access.
+Important configuration notes:
 
-> Never put the AI key or privileged database keys in `VITE_*` variables, and never commit `.env` files. Supabase Auth manages sessions; do not create a parallel password/token system without an explicit design change.
+- Use plain URLs, without Markdown link syntax.
+- `CLIENT_URL` must match the frontend origin.
+- Both applications must use the same Supabase project.
+- `VITE_` variables are included in the frontend bundle and must contain only public configuration.
+- Keep the Supabase server key and Gemini API key in `server/.env`.
+- Never commit real `.env` files.
+- Restart development processes after changing environment variables.
+- Production frontend environment changes require a new build.
 
-## 🗄️ Planned Data Model
+### 5. Prepare Supabase
+
+From the repository root:
+
+```bash
+npx supabase login
+npx supabase link --project-ref YOUR_PROJECT_REF
+npx supabase migration list
+npx supabase db push --dry-run --include-all
+```
+
+Review the pending migrations before applying them:
+
+```bash
+npx supabase db push --include-all
+```
+
+For a new development database, run `supabase/seed.sql` through the Supabase SQL Editor after applying migrations.
+
+The seed provides the initial skills, questions, and grading data.
+
+For an existing shared project:
+
+- Coordinate database changes with the team.
+- Check migration history before applying changes.
+- If SQL was applied manually, verify the complete migration before marking it as applied.
+- Do not reset the shared database as a setup shortcut.
+
+Configure Supabase Auth URLs and email confirmation settings for the environment being used.
+
+### 6. Start the application
+
+```bash
+npm run dev
+```
+
+| Service | URL |
+| --- | --- |
+| Frontend | http://localhost:5173 |
+| API | http://localhost:5000/api |
+| Health endpoint | http://localhost:5000/api/health |
+
+The health endpoint confirms that Express responds. It does not independently verify database access or Gemini availability.
+
+## 📜 Available Commands
+
+Run these commands from the repository root:
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the frontend and backend |
+| `npm run client` | Start the frontend |
+| `npm run server` | Start the backend |
+| `npm run build` | Build the frontend |
+| `npm start` | Start the backend without watch mode |
+| `npm run lint --prefix client` | Run frontend linting |
+| `npm test --prefix server` | Run backend tests |
+| `npm run eval:ai --prefix server` | Evaluate the configured AI provider |
+| `git diff --check` | Check changes for whitespace errors |
+
+`npm start` starts the API only. Hosting the frontend requires serving `client/dist` separately.
+
+## 🗄️ Data Model
 
 | Entity | Purpose |
 | --- | --- |
-| `profiles` | Grade level, goal, interests, available time, and preferences |
-| `skills` | Learning topics and prerequisites |
-| `questions` | Versioned, skill-tagged questions without exposed answer keys |
-| `private.answer_keys` | Protected correct answers and grading rules |
-| `attempts` | Diagnostic/practice submissions and server-computed results |
-| `attempt_items` | Assigned questions, choices, and grading results |
-| `learning_plans` | Plans linked to the diagnostic used to create them |
-| `plan_tasks` | Ordered tasks, durations, skills, and status |
-| `conversations` | Student-owned tutor or mentor sessions |
-| `messages` | Content, processing status, and request identifiers |
-| `grades` | Self-reported school marks |
+| Profiles | Student name, grade, goal, and daily study time |
+| Skills | Supported learning skills and prerequisites |
+| Questions | Learning questions and answer options |
+| Attempts | Diagnostic and practice sessions |
+| Attempt items | Assigned questions and submitted answers |
+| Learning plans | Plans generated from assessment results |
+| Plan tasks | Practice tasks and completion status |
+| Conversations | Student-owned tutor and mentor conversations |
+| Messages | Student messages, assistant replies, and suggested tasks |
+| Grades | Student-entered school grades |
 
-### Data Rules
+Answer keys are restricted grading data and must not be exposed to the client.
 
-- Students access only their own private learning records.
-- Messages and tasks inherit access restrictions from their parent conversation or plan.
-- The server selects assigned questions and calculates results.
-- Scores, correctness flags, and assistant messages are server-owned fields.
-- School marks must be between `0` and `100`.
-- Final submission and grading writes should be atomic.
-- Request identifiers prevent duplicate writes on supported retries.
-- Index ownership fields and message/task ordering fields.
-- Version questions instead of changing historical answer semantics.
+School grades are entered by students. They are separate from diagnostic scores calculated by the learning engine.
 
-## 🔌 Planned API
+Career paths are currently curated JSON content.
 
-Application endpoints require a valid session and relevant ownership checks.
+## 🔌 Main API Endpoints
+
+Protected requests use:
+
+```http
+Authorization: Bearer <SUPABASE_ACCESS_TOKEN>
+```
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET`, `PATCH` | `/api/me/profile` | Read/update allowed profile fields |
-| `POST` | `/api/attempts` | Create an assessment or practice attempt |
-| `POST` | `/api/attempts/:id/submit` | Submit answers for server grading |
-| `GET` | `/api/attempts/:id` | Read an owned attempt |
-| `POST` | `/api/plans` | Build a plan from an owned diagnostic |
-| `GET` | `/api/plans/current` | Read the current plan |
-| `POST` | `/api/plans/:id/tasks` | Add a validated task |
-| `PATCH` | `/api/tasks/:id` | Update permitted task fields |
-| `GET`, `POST` | `/api/conversations` | List/create conversations |
-| `GET`, `POST` | `/api/conversations/:id/messages` | Read history or send a message |
-| `GET`, `POST` | `/api/grades` | Read/record self-reported marks |
-| `GET` | `/api/progress` | Summarize saved learning evidence |
-| `GET` | `/api/career-paths` | Read curated pathways |
+| GET | `/api/health` | API health check |
+| GET | `/api/me/profile` | Read the current student's profile |
+| PATCH | `/api/me/profile` | Update the profile |
+| POST | `/api/attempts` | Start or resume an assessment or practice attempt |
+| GET | `/api/attempts/:id` | Retrieve an attempt |
+| POST | `/api/attempts/:id/submit` | Submit answers for grading |
+| POST | `/api/plans` | Create a learning plan |
+| GET | `/api/plans/current` | Retrieve the current plan |
+| POST | `/api/plans/:id/tasks` | Add a task to a plan |
+| PATCH | `/api/tasks/:id` | Update task status |
+| GET | `/api/progress` | Retrieve learning progress |
+| GET | `/api/career-paths` | Retrieve curated career paths |
+| GET | `/api/conversations` | List the student's conversations |
+| POST | `/api/conversations` | Create a conversation |
+| GET | `/api/conversations/:id/messages` | Retrieve conversation messages |
+| POST | `/api/conversations/:id/messages` | Save a message and request an AI reply |
+| GET | `/api/grades` | List school grades |
+| POST | `/api/grades` | Create a school grade |
+| PATCH | `/api/grades/:id` | Edit a school grade |
 
-Sign-up and login use Supabase Auth. Do not trust client-supplied `user_id`, `score`, `is_correct`, or privileged message roles.
+Grade updates currently expect the complete editable form payload. Grade deletion is not implemented.
 
-### Error Format
+## 💬 AI Chat and Retry Behavior
+
+A student message includes its content and a client-generated request ID:
 
 ```json
 {
-  "error": {
-    "code": "VALIDATION_ERROR",
-    "message": "Invalid answer"
-  },
-  "requestId": "unique-request-id"
+  "content": "ساعدني على فهم جمع الكسور خطوة بخطوة",
+  "requestId": "YOUR_UUID"
 }
 ```
 
-## 🤖 AI Tutor Design
+A successful request can return:
 
-**Tutor mode** explains the current concept, uses the student's preferences, offers hints, and invites practice with reviewed questions.
-
-**Mentor mode** helps organize study time, identify the next task, and explore future options with reasons.
-
-```text
-Student sends a message
-  → Verify session, ownership, and limits
-  → Save the user message with a request ID
-  → Assemble limited learning context
-  → Call the provider from Express
-  → Validate and save the reply
-  → Display the result in React
+```json
+{
+  "success": true,
+  "created": true,
+  "message": {},
+  "assistantMessage": {},
+  "assistantCreated": true,
+  "isDemo": false
+}
 ```
 
-Only send relevant context: current skill, related results, available time, preferences, and bounded conversation history. Treat messages and retrieved content as untrusted data.
+- `created` indicates whether a new student message was inserted.
+- `assistantCreated` indicates whether a new assistant reply was inserted.
+- Repeating the same request ID and content returns the saved messages.
+- Reusing a request ID with different content returns a conflict.
+- If the student message was saved but AI generation failed, retry with the same content and request ID.
+- Do not create a new request ID merely because a request timed out.
+- Historical replies may return `isDemo: null` when provider metadata was not persisted.
 
-A suggested task is stored only after the student accepts it and the server validates the task, skill, duration, and plan ownership.
+An assistant may suggest a task:
 
-### Failure Handling
+```json
+{
+  "title": "تدريب على توحيد المقامات",
+  "skillId": "fractions",
+  "minutes": 10
+}
+```
 
-- Enforce provider timeouts and per-account request limits.
-- Preserve failed-message status and offer retry.
-- Validate structured output before using it.
-- Keep earlier plans and progress available during failures.
-- Label any prepared demo fallback response clearly.
+The suggestion is stored with the assistant message. It becomes a plan task only when the student chooses to add it.
 
-## 🎨 Interface
+The plan task request uses its own request ID, reused when retrying the same addition.
 
-The design supports Arabic and RTL with purple primary actions, mint goal cards, sky-blue tutoring surfaces, and warm-yellow starting activities.
+### Capacity controls
 
-Main screens: authentication, onboarding, dashboard, assessment/results, learning path, chat/history, progress/marks, career exploration, and profile.
+The current implementation includes:
 
-Include loading, empty, error, and success states, readable text, keyboard focus, and labels alongside status colors.
+- A limit of 10 chat send requests per student per minute
+- A configurable maximum number of simultaneous AI generations
+- A provider timeout
+- Structured errors for busy, rate-limited, and unavailable services
 
-## 🔐 Security Requirements
+The default AI concurrency is `2`.
 
-- Verify access tokens and expected claims on the server.
-- Enforce ownership on every protected record and test RLS policies.
-- Keep answer keys inaccessible to student clients.
-- Reject unauthorized score and message-role changes.
-- Validate all write requests on the server.
-- Render plain text or sanitized Markdown, not untrusted HTML.
-- Keep secrets out of client bundles and logs.
-- Use HTTPS and restrict allowed frontend origins.
-- Limit message size, request frequency, model output, and provider duration.
-- Use fictional data for demonstrations.
+Request counters and concurrency controls are currently held in memory per server process. Multiple server instances would require coordinated limits.
 
-Hiding a control in React is not an authorization mechanism.
+These controls do not establish a verified concurrent-user capacity; load testing remains pending.
 
-## 🧪 Testing and Delivery
+## 🔐 Security and Data Boundaries
 
-| Area | Planned checks |
+- Protected API requests validate the Supabase access token.
+- Ownership checks restrict access to student data.
+- Database RLS and grants restrict permitted operations.
+- The backend derives student identity from authentication.
+- Assessment scores are calculated from server-side answer keys.
+- Client-supplied grading claims are not trusted.
+- AI output is validated before persistence.
+- Student messages and profile text are treated as untrusted AI context.
+- Privileged keys remain on the server.
+- Helmet and request body limits are enabled.
+- CORS is configured for the frontend origin.
+- Production configuration rejects mock AI and the demo reply endpoint.
+
+The AI tutor supports learning; it does not issue official school grades or make binding career decisions.
+
+## 🧪 Testing and AI Evaluation
+
+Run backend tests:
+
+```bash
+npm test --prefix server
+```
+
+Run frontend checks:
+
+```bash
+npm run lint --prefix client
+npm run build --prefix client
+```
+
+Evaluate the real AI provider:
+
+```bash
+npm run eval:ai --prefix server
+```
+
+The AI evaluation covers:
+
+- Explanations of fractions, equations, and percentages
+- Hints that leave work for the student
+- Feedback on mathematical mistakes
+- Study organization
+- Off-topic handling
+- Prompt injection through messages and profile goals
+
+Latest recorded successful evaluation on September 30, 2026:
+
+| Metric | Result |
 | --- | --- |
-| Learning rules | Grading, skill priorities, and time allocation |
-| Authentication | Invalid login, expired sessions, and protected requests |
-| Authorization | Cross-student access is denied |
-| Persistence | Atomic submissions, valid references, and safe retries |
-| AI | Timeouts, malformed output, provider failure, and message status |
-| React UI | Responsive RTL, keyboard actions, and error states |
-| End-to-end | Sign in → assessment → plan → tutor → practice → saved progress |
+| Provider | Gemini |
+| Model | `gemini-3.5-flash-lite` |
+| Cases passed | 12 / 12 |
+| Checks passed | 40 / 40 |
+| Provider errors | 0 |
+| Median latency | 1,238 ms |
+| P90 latency | 1,536 ms |
 
-Deployment is planned for a static React host, a Node-capable Express host, and Supabase. Hosting selection and integrated deployment remain implementation tasks.
+See the [evaluation report](docs/ai-eval/results/gemini-gemini-3.5-flash-lite-2026-09-30-19-07.md).
+
+This is one recorded evaluation run, not a guarantee of every future response or production latency.
+
+Real-provider evaluations consume API quota.
+
+The previously recorded backend baseline was **109 passed and 3 skipped**. Rerun the suite after current integration changes before treating it as the branch's final result.
+
+Database concurrency tests require a configured test database. Use an isolated test environment, not the shared production database.
 
 ## 👥 Team Ownership
 
-Responsibilities are aligned with the team's current experience.
+| Member | Primary ownership |
+| --- | --- |
+| **Basher — Member 1** | Project foundation, authentication, profiles, conversation storage, AI integration, school grades, integration, and deployment |
+| **Ward — Member 2** | Learning engine, assessment and plan APIs, practice, progress, career content, and AI service foundations |
+| **Yousef — Member 3** | React chat, conversation history, career exploration, and progress interfaces |
+| **All members** | Reviews, integration testing, documentation, and the hackathon presentation |
 
-| Member | Primary area | Ownership |
-| --- | --- | --- |
-| **Member 1 — Basher** | Platform, authentication, conversation backend | Shared setup, Supabase Auth, profiles/grades, security, message APIs, client helpers, and deployment |
-| **Member 2 — Ward** | Learning engine and AI service | Questions, grading, assessments, plans/tasks, progress, learning screens, AI adapter/context/prompts, and career content |
-| **Member 3 — Yousef** | React chat and career UI | Message components, composer, history, tutor/mentor selection, responsive states, and a simple career page |
-| **All members** | Integration and presentation | Reviews, API contracts, complete-flow checks, and demo rehearsal |
+For the final delivery phase, Basher is also completing remaining backend and AI work originally assigned to Member 2.
 
-### Support and Handoffs
+## 🤝 Development Workflow
 
-- Yousef starts with mock data and small React components.
-- Basher supplies documented `sendMessage()`, `listConversations()`, and `getMessages()` helpers.
-- Ward supplies the learning context and task-creation contract.
-- Basher supports Yousef's API integration and reviews his changes.
-- Ward's AI service is called by Basher's message API, which persists results.
-- Ward owns task validation and persistence; Yousef renders the acceptance action.
-- Backend, security, database design, AI provider integration, and deployment remain with Basher and Ward.
-- Yousef checks React behavior and layout. Basher/Ward own automated backend, grading, and security tests.
-- Streaming, voice, and uploads are not blockers for Yousef's work.
+1. Update local `main`.
+2. Create a feature or fix branch.
+3. Keep changes focused on the assigned task.
+4. Coordinate API contracts and shared files with the team.
+5. Run checks relevant to the change.
+6. Open a pull request with a description and validation results.
+7. Resolve review feedback and merge conflicts before merging.
 
-## 🌿 Git Workflow
+Example:
 
-Use **one shared repository** and small feature branches, for example:
-
-```text
-feature/auth-profile
-feature/conversation-api
-feature/assessment-path
-feature/ai-service
-feature/react-chat-ui
+```bash
+git switch main
+git pull --ff-only origin main
+git switch -c feature/your-feature
 ```
 
-These are feature branches, not permanent personal branches.
+Shared files such as `App.jsx`, `app.js`, locale files, and environment examples need particular care during integration.
 
-1. Start from the latest `main`.
-2. Complete a small working feature slice.
-3. Commit, push, and open a pull request.
-4. Ask a teammate to review.
-5. Merge after relevant checks pass.
-6. Update local `main` and incorporate changes into ongoing branches as needed.
-7. Create the next feature branch from updated `main`.
+Commit migration files and `.env.example` updates with the feature. Never commit credentials.
 
-Do not wait for the entire project to finish before merging. Basher or Ward reviews Yousef's changes and provides concrete next steps. Agree on schema and API changes before implementing them.
+## 🚢 Remaining Delivery Work
 
-## 🗺️ Roadmap
+- Complete integration of chat, career exploration, and progress pages.
+- Verify authentication and navigation after merging frontend changes.
+- Confirm school grade editing persists correctly.
+- Test task suggestions from chat through addition to the learning plan.
+- Verify conversation ownership, retries, timeouts, and failure recovery.
+- Run the full test suite, frontend lint, and production build.
+- Review temporary screens, unused files, and development-only code.
+- Test expected concurrent usage against hosting and provider quotas.
+- Deploy the frontend and API.
+- Configure production URLs, Supabase Auth redirects, and environment variables.
+- Run the complete student journey on the deployed application.
 
-- [x] Define the project idea and initial scope.
-- [x] Prepare interactive UI prototypes and design documents.
-- [x] Agree experience-aligned team responsibilities.
-- [ ] Create the shared application skeleton and verified setup scripts.
-- [ ] Implement authentication, profiles, and access controls.
-- [ ] Implement diagnostics, grading, and plans.
-- [ ] Implement persistent chat and live AI integration.
-- [ ] Connect React chat and suggested tasks.
-- [ ] Complete progress, marks, and career exploration.
-- [ ] Run security, integration, and end-to-end checks.
-- [ ] Deploy and rehearse the complete presentation.
+For production:
 
-Update these statuses as implementation progresses.
-
-## 📚 Documentation
-
-The existing full-stack design document and revised team preparation plan were created under the working name **Masari**. The project is now named **Masari**.
-
-Rename/update those documents when adding them to `docs/`, then link their actual repository paths. The latest team allocation above takes precedence over the earlier allocation in the original design document.
+- Set `NODE_ENV=production`.
+- Keep `CHAT_DEMO_ENABLED=false`.
+- Use a real AI provider and server-only credentials.
+- Set `VITE_USE_MOCK_LEARNING=false`.
+- Configure HTTPS and the exact frontend origin.
+- Configure frontend hosting to support React Router navigation.
+- Apply reviewed database migrations before dependent features go live.
 
 ---
 
 <p align="center">
-  <strong>Masari</strong> · Discover · Plan · Learn · Grow
+  <strong>Masari | مساري</strong>
   <br />
-  <em>Your future starts with the next step.</em>
+  مساري — مرشدك المهني لمسارك الصحيح
 </p>
