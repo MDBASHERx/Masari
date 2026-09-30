@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate } from "react-router";
+import { Link, Navigate, useLocation } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getLocale } from "../../locales/locale.js";
 import "../../styles/Auth.css";
@@ -7,6 +7,7 @@ import "../../styles/Auth.css";
 function Login() 
 {
     const locale = getLocale();
+    const location = useLocation();
     const { login, loading, isAuthenticated, authError } = useAuth();
 
     const [email, setEmail] = useState("");
@@ -58,7 +59,11 @@ function Login()
 
     if (isAuthenticated) 
     {
-        return <Navigate to="/" replace />;
+        const requestedPath = location.state?.from;
+        const destination = typeof requestedPath === "string" && requestedPath.startsWith("/")
+            ? requestedPath
+            : "/";
+        return <Navigate to={destination} replace />;
     }
 
     return (
@@ -75,6 +80,10 @@ function Login()
                 <p className="auth-description">
                     {locale.auth.loginDescription}
                 </p>
+
+                {location.state?.reason === "sessionExpired" && (
+                    <p className="auth-error" role="alert">انتهت جلستك. سجّل الدخول ثم أعد محاولة الرسالة المحفوظة.</p>
+                )}
 
                 {authError && (
                     <p className="auth-error" role="alert">

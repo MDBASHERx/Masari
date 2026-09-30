@@ -10,6 +10,7 @@ import Assessment from "./pages/assessment/Assessment.jsx";
 import LearningPath from "./pages/learningPath/LearningPath.jsx";
 import Chat from "./pages/Chat.jsx";
 import CareerExploration from "./pages/CareerExploration.jsx";
+import Grades from "./pages/grades/Grades.jsx";
 import Progress from "./pages/progress/Progress.jsx";
 
 function App() 
@@ -28,6 +29,7 @@ function App()
                 <Route path="/learning-path" element={<LearningPath />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/future" element={<CareerExploration />} />
+                <Route path="/grades" element={<Grades />} />
                 <Route path="/progress" element={<Progress />} />
             </Route>
 

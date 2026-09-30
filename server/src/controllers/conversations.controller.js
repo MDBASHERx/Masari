@@ -136,9 +136,19 @@ const respondWithAssistant = async ({ req, res, conversation, userMessage, creat
     } catch (error) {
         const knownError = error instanceof LearningError;
 
-        if (!knownError)
-        {
-            console.error("Chat reply failed:", error.code ?? error.name);
+        const temporarilyUnavailable =
+            knownError &&
+            ["AI_BUSY", "AI_RATE_LIMITED"].includes(error.code);
+
+        if (!knownError) {
+            console.error(
+                "Chat reply failed:",
+                error.code ?? error.name,
+            );
+        }
+
+        if (temporarilyUnavailable) {
+            res.setHeader("Retry-After", "5");
         }
 
         return res.status(knownError ? error.status : 500).json({
@@ -150,6 +160,9 @@ const respondWithAssistant = async ({ req, res, conversation, userMessage, creat
             userMessageSaved: true,
             userMessage,
             requestId: userMessage.request_id,
+            ...(temporarilyUnavailable
+                ? { retryAfterSeconds: 5 }
+                : {}),
         });
     }
 };

@@ -9,6 +9,7 @@ import conversationsRoutes from "./routes/conversations.routes.js";
 import plansRoutes from "./routes/plans.routes.js";
 import progressRoutes from "./routes/progress.routes.js";
 import tasksRoutes from "./routes/tasks.routes.js";
+import gradesRoutes from "./routes/grades.routes.js";
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use("/api/plans", plansRoutes);
 app.use("/api/tasks", tasksRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/career-paths", careerPathsRoutes);
+app.use("/api/grades", gradesRoutes);
 
 // Unknown routes
 app.use((req, res) => {

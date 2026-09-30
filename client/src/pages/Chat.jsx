@@ -34,7 +34,7 @@ function taskStorageKey(userId, planId, messageId) {
 function isPermanentRejection(error) {
     const status = error.response?.status;
     const saved = error.response?.data?.userMessageSaved;
-    return !saved && status >= 400 && status < 500 && status !== 408 && status !== 429;
+    return !saved && status >= 400 && status < 500 && status !== 401 && status !== 408 && status !== 429;
 }
 
 function savePending(userId, pending) {
@@ -84,7 +84,7 @@ function mergeMessages(previous, incoming) {
 
 export default function Chat() {
     const navigate = useNavigate();
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
     const [conversations, setConversations] = useState([]);
     const [selected, setSelected] = useState(null);
     const selectedRef = useRef(null);
@@ -223,6 +223,10 @@ export default function Chat() {
                     setError(errorMessage(sendError, "تعذر الحصول على رد. احتفظنا بالرسالة لإعادة المحاولة."));
                     setPendingMessage(pending);
                 }
+            }
+            if (sendError.response?.status === 401) {
+                await logout().catch(() => {});
+                navigate("/login", { replace: true, state: { from: "/chat", reason: "sessionExpired" } });
             }
         } finally {
             sendingConversationIds.current.delete(conversationId);
