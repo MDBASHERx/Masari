@@ -24,9 +24,7 @@ const learning = {
         submit: "إنهاء وعرض النتيجة",
         submitting: "جارٍ التصحيح…",
         unansweredWarning: (count) =>
-            count === 1
-                ? "بقي سؤال واحد بلا إجابة، وسيُحسب خطأ."
-                : `بقي ${count} أسئلة بلا إجابة، وستُحسب خطأ.`,
+            count === 1 ? "بقي سؤال واحد بلا إجابة، وسيُحسب خطأ." : `بقي ${count} أسئلة بلا إجابة، وستُحسب خطأ.`,
 
         resultTitle: "نتيجتك",
         overallScore: "النتيجة الكلية: ",
@@ -38,36 +36,55 @@ const learning = {
         creatingPlan: "جارٍ بناء خطتك…",
     },
 
+    practice: {
+        title: (skill) => `تدريب: ${skill}`,
+        description: "أسئلة قصيرة على هذه المهارة، ونبدأ بالأسئلة التي لم ترها من قبل.",
+        factQuestions: "3 أسئلة",
+        factTime: "حوالي 3 دقائق",
+        start: "ابدأ التدريب",
+        backToPlan: "العودة إلى خطتي",
+    },
+
+    learningPath: {
+        title: "خطتي",
+        intro: "رتّبنا المهام حسب نتيجتك: نبدأ بالمهارات التي تحتاجها أولاً. بجانب كل مهمة سبب ترتيبها.",
+        loading: "جارٍ تحميل خطتك…",
+        empty: "لا توجد خطة بعد. ابدأ بالتشخيص القصير لنبني لك خطة تناسبك.",
+        retry: "أعد المحاولة",
+        doneOf: (done, total) => `أنجزت ${done} من ${total}`,
+        totalTime: (minutes) => `المدة الكلية: ${minutes} دقيقة`,
+        progressLabel: "تقدّمك في الخطة",
+        minutes: (minutes) => `${minutes} دقيقة`,
+        whyHere: "لماذا هنا؟",
+        fromChat: "من المحادثة",
+        practice: "تدرّب",
+        markDone: "أنجزتها",
+        saving: "جارٍ الحفظ…",
+        masteryNote: "إنجاز المهمة لا يعني إتقان المهارة. تقدّمك يُحسب من نتائج التدريب.",
+    },
+
     progress: {
         title: "تقدمي",
         subtitle: "شاهد نتائج التشخيص والتدريب وتقدم خطتك.",
-
         loading: "جاري تحميل تقدمك...",
         errorTitle: "تعذر تحميل التقدم",
         errorMessage: "حدث خطأ أثناء تحميل بيانات التقدم.",
         retry: "إعادة المحاولة",
-
         emptyTitle: "ابدأ رحلتك التعليمية",
-        emptyMessage:
-            "لا توجد بيانات تقدم بعد. ابدأ التقييم التشخيصي حتى نتمكن من بناء تقدمك.",
+        emptyMessage: "لا توجد بيانات تقدم بعد. ابدأ التقييم التشخيصي حتى نتمكن من بناء تقدمك.",
         startAssessment: "ابدأ التقييم",
-
         latestDiagnostic: "آخر تشخيص",
-
-        skillsTitle: "المهارات",
+        skillsTitle: "نتائج المهارات",
         diagnostic: "التشخيص",
         practice: "التدريب",
         practiceAttempts: "مرات التدريب",
         lastPractice: "آخر تدريب",
         notStarted: "لم تبدأ بعد",
         correctAnswers: "الإجابات الصحيحة",
-
-        planTitle: "تقدم الخطة",
+        planTitle: "إنجاز مهام الخطة",
         noPlan: "لا توجد خطة تعلم حالياً.",
-
         recentAttempts: "آخر المحاولات",
         noAttempts: "لا توجد محاولات بعد.",
-
         diagnosticType: "تشخيص",
         practiceType: "تدريب",
     },

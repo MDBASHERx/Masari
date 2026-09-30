@@ -2,9 +2,16 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import attemptsRoutes from "./routes/attempts.routes.js";
+import careerPathsRoutes from "./routes/careerPaths.routes.js";
 import meRoutes from "./routes/me.routes.js";
+import conversationsRoutes from "./routes/conversations.routes.js";
+import plansRoutes from "./routes/plans.routes.js";
+import progressRoutes from "./routes/progress.routes.js";
+import tasksRoutes from "./routes/tasks.routes.js";
 
 const app = express();
+
 app.use(helmet());
 
 app.use(
@@ -24,8 +31,14 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/me", meRoutes);
+app.use("/api/conversations", conversationsRoutes);
+app.use("/api/attempts", attemptsRoutes);
+app.use("/api/plans", plansRoutes);
+app.use("/api/tasks", tasksRoutes);
+app.use("/api/progress", progressRoutes);
+app.use("/api/career-paths", careerPathsRoutes);
 
-// Add feature routes above this middleware
+// Unknown routes
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -35,12 +48,12 @@ app.use((req, res) => {
 
 // Error handler
 app.use((error, req, res, next) => {
-    if (res.headersSent) 
+    if (res.headersSent)
     {
         return next(error);
     }
 
-    if (error.type === "entity.parse.failed") 
+    if (error.type === "entity.parse.failed")
     {
         return res.status(400).json({
             success: false,
@@ -48,7 +61,7 @@ app.use((error, req, res, next) => {
         });
     }
 
-    if (error.type === "entity.too.large") 
+    if (error.type === "entity.too.large")
     {
         return res.status(413).json({
             success: false,
@@ -56,7 +69,7 @@ app.use((error, req, res, next) => {
         });
     }
 
-  console.error("Server error:", error.message);
+    console.error("Server error:", error.message);
 
     return res.status(500).json({
         success: false,

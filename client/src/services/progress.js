@@ -5,12 +5,12 @@ export const USE_MOCK_PROGRESS =
 
 const loadMock = () => import("./progress.mock.js");
 
-export const getProgress = async () => {
+export const getProgress = async (signal) => {
   if (USE_MOCK_PROGRESS) {
     return (await loadMock()).getProgress();
   }
 
-  const { data } = await API.get("/progress");
+  const { data } = await API.get("/progress", { signal });
 
   return data.progress;
 };

@@ -35,22 +35,35 @@ function Progress() {
     const [progress, setProgress] = useState(null);
     const [status, setStatus] = useState("loading");
 
-    const loadProgress = async () => {
+    const loadProgress = async (signal) => {
         setStatus("loading");
 
         try {
-            const data = await getProgress();
+            const data = await getProgress(signal);
 
             setProgress(data);
             setStatus("success");
         } catch (error) {
+            if (error.code === "ERR_CANCELED") return;
             console.error("Failed to load progress:", error);
             setStatus("error");
         }
     };
 
     useEffect(() => {
-        loadProgress();
+        const controller = new AbortController();
+        getProgress(controller.signal)
+            .then((data) => {
+                setProgress(data);
+                setStatus("success");
+            })
+            .catch((error) => {
+                if (error.code !== "ERR_CANCELED") {
+                    console.error("Failed to load progress:", error);
+                    setStatus("error");
+                }
+            });
+        return () => controller.abort();
     }, []);
 
     // ---------- Loading ----------
@@ -80,7 +93,7 @@ function Progress() {
                     <button
                         className="progress-button"
                         type="button"
-                        onClick={loadProgress}
+                        onClick={() => loadProgress()}
                     >
                         {locale.progress.retry}
                     </button>

@@ -1,0 +1,1 @@
+grant select on table public.skills to service_role;
