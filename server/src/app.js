@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import attemptsRoutes from "./routes/attempts.routes.js";
 import meRoutes from "./routes/me.routes.js";
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/me", meRoutes);
+app.use("/api/attempts", attemptsRoutes);
 
 // Add feature routes above this middleware
 app.use((req, res) => {
