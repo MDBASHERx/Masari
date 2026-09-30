@@ -54,6 +54,11 @@ export const getCurrentPlan = async (signal) => {
     }
 };
 
+export const addSuggestedTask = async (planId, task) => {
+    const { data } = await API.post(`/plans/${planId}/tasks`, task);
+    return data.task;
+};
+
 // Students can change the status only: "todo" | "in_progress" | "done"
 export const updateTaskStatus = async (taskId, status) => {
     if (USE_MOCK_LEARNING) return (await loadMock()).updateTaskStatus(taskId, status);

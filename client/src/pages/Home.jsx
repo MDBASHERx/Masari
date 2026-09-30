@@ -44,6 +44,8 @@ function Home()
             <Link to="/profile">{locale.profile.title}</Link>
             <Link to="/assessment">{locale.assessment.start}</Link>
             <Link to="/learning-path">{locale.learningPath.title}</Link>
+            <Link to="/chat">المحادثة مع المعلم أو المرشد</Link>
+            <Link to="/future">استكشف المسارات المهنية</Link>
             <Link to="/grades">{locale.grades.title}</Link>
             <Link to="/progress">{locale.progress.title}</Link>
 
