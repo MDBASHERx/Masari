@@ -15,7 +15,6 @@ const learning = {
         factNoMarks: "ليس امتحانًا ولا يؤثر على علاماتك المدرسية",
         start: "ابدأ التشخيص",
         starting: "جارٍ التحضير…",
-        mockMode: "وضع تجريبي: هذه البيانات ليست من الخادم.",
 
         questionOf: (number, total) => `السؤال ${number} من ${total}`,
         progressLabel: "تقدّمك في التشخيص",

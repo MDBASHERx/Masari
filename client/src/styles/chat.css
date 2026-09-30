@@ -7,3 +7,13 @@
 .message--user { margin-inline-start: auto; background: var(--color-mint); }
 .message p { margin: 0 0 4px; }
 @media (max-width: 720px) { .chat-layout { grid-template-columns: 1fr; } .message { max-width: 92%; } }
+
+.message p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.conversation-list { display: grid; gap: 8px; }
+.conversation-item { padding: 10px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); text-align: start; overflow-wrap: anywhere; }
+.mode-button { padding: 8px 16px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); }
+.mode-button.active { background: var(--color-mint); }
+.chat-panel form { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.chat-panel input { flex: 1 1 200px; min-width: 0; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.chat-panel button, .chat-page__header > button { padding: 8px 14px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.chat-page button:disabled { opacity: .6; cursor: not-allowed; }

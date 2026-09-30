@@ -1,5 +1,6 @@
+import BackLink from "../../components/design/BackLink.jsx";
+import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router";
 
 import {
     getGrades,
@@ -214,9 +215,8 @@ function Grades() {
     return (
         <main className="grades-page">
             <header>
-                <Link to="/">{locale.all.backHome}</Link>
-                <h1>{text.title}</h1>
-                <p>{text.description}</p>
+                <BackLink>{locale.all.backHome}</BackLink>
+                <PageHeading icon="grades" tone="yellow" title={text.title} description={text.description} />
             </header>
 
             <section

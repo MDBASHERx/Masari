@@ -10,6 +10,20 @@ const consoleLog = async (app) => {
 
     await new Promise((resolve, reject) => {
         const server = app.listen(port);
+        app.locals.httpServer = server;
+        let shuttingDown = false;
+        const shutdown = () => {
+            if (shuttingDown) return;
+            shuttingDown = true;
+            const deadline = setTimeout(() => process.exit(1), 55000);
+            deadline.unref();
+            server.close((error) => {
+                clearTimeout(deadline);
+                process.exit(error ? 1 : 0);
+            });
+        };
+        process.once("SIGTERM", shutdown);
+        process.once("SIGINT", shutdown);
 
         server.once("error", reject);
 

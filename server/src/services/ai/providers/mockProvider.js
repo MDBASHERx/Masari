@@ -1,4 +1,4 @@
-// Demo provider used until the team picks a real one (LLM_PROVIDER=mock).
+// Deterministic offline test/evaluation provider. Production startup rejects mock mode.
 // Replies are fixed, mathematically checked, and ALWAYS labelled as demo.
 
 const TUTOR_REPLIES = {

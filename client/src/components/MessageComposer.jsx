@@ -18,12 +18,13 @@ function MessageComposer({ text, onTextChange, onSend, onCancel, disabled = fals
         onChange={(e) => onTextChange(e.target.value)}
         disabled={disabled}
         maxLength={maxLength}
+        aria-label="رسالتك للمعلم أو المرشد"
         aria-describedby="message-length"
       />
 
-      <span id="message-length">{text.length} / {maxLength}</span>
-      <button type="submit" disabled={disabled || !text.trim()}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
-      {onCancel && <button type="button" onClick={onCancel}>إلغاء الرسالة المرفوضة</button>}
+      <span id="message-length" dir="ltr">{text.length} / {maxLength}</span>
+      <button className="ui-button" type="submit" disabled={disabled || !text.trim()}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
+      {onCancel && <button className="ui-button ui-button--soft" type="button" onClick={onCancel}>إلغاء الرسالة المرفوضة</button>}
     </form>
   );
 }

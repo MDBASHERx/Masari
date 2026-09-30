@@ -1,5 +1,7 @@
+import BackLink from "../components/design/BackLink.jsx";
+import PageHeading from "../components/design/PageHeading.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import ConversationList from "../components/ConversationList.jsx";
 import MessageComposer from "../components/MessageComposer.jsx";
 import MessageList from "../components/MessageList.jsx";
@@ -11,6 +13,7 @@ import { useAuth } from "../hooks/useAuth.js";
 import "../styles/chat.css";
 
 const PAGE_SIZE = 30;
+// Keep legacy storage keys so existing drafts and retry IDs survive the Masari rename.
 const SELECTED_KEY = "my-coach:selected-conversation";
 const PENDING_KEY = "my-coach:pending-messages";
 const REJECTED_KEY = "my-coach:rejected-message-drafts";
@@ -19,7 +22,10 @@ const MAX_MESSAGE_LENGTH = 2000;
 const errorMessage = (error, fallback) => error.response?.data?.message || fallback;
 
 function readStored(key) {
-    try { return JSON.parse(localStorage.getItem(key) || "{}"); }
+    try {
+        const value = JSON.parse(localStorage.getItem(key) || "{}");
+        return value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    }
     catch { return {}; }
 }
 
@@ -88,6 +94,7 @@ export default function Chat() {
     const [conversations, setConversations] = useState([]);
     const [selected, setSelected] = useState(null);
     const selectedRef = useRef(null);
+    const messageLoad = useRef({ version: 0, controller: null });
     const [mode, setMode] = useState("tutor");
     const [messages, setMessages] = useState([]);
     const [isLoadingConversations, setIsLoadingConversations] = useState(true);
@@ -104,6 +111,10 @@ export default function Chat() {
     const sendingConversationIds = useRef(new Set());
 
     const selectConversation = useCallback(async (conversation) => {
+        messageLoad.current.controller?.abort();
+        const controller = new AbortController();
+        const version = messageLoad.current.version + 1;
+        messageLoad.current = { version, controller };
         selectedRef.current = conversation;
         setSelected(conversation);
         setMode(conversation.mode);
@@ -122,14 +133,23 @@ export default function Chat() {
             const loaded = await loadEveryPage(async (offset, signal) => {
                 const data = await getMessages(conversation.id, { offset, limit: PAGE_SIZE, signal });
                 return { items: data.messages, pagination: data.pagination };
-            });
-            if (selectedRef.current?.id === conversation.id) {
-                const hasSavedUserMessage = restoredPending && loaded.some((message) => message.request_id === restoredPending.requestId && message.role === "user");
-                const restoredMessages = restoredPending && !hasSavedUserMessage
-                    ? [...loaded, { id: `pending-${restoredPending.requestId}`, role: "user", content: restoredPending.content, created_at: restoredPending.createdAt }]
+            }, controller.signal);
+            if (messageLoad.current.version === version && !controller.signal.aborted) {
+                let currentPending = readStored(userStorageKey(PENDING_KEY, user.id))[conversation.id] || null;
+                if (currentPending && loaded.some((message) => message.role === "assistant" && message.request_id === currentPending.requestId)) {
+                    removePending(user.id, conversation.id);
+                    currentPending = null;
+                }
+                setPendingMessage(currentPending);
+                const hasSavedUserMessage = currentPending && loaded.some((message) => message.request_id === currentPending.requestId && message.role === "user");
+                const restoredMessages = currentPending && !hasSavedUserMessage
+                    ? [...loaded, { id: `pending-${currentPending.requestId}`, role: "user", content: currentPending.content, created_at: currentPending.createdAt }]
                     : loaded;
-                setMessages(restoredMessages);
-                if (restoredPending) {
+                setMessages((current) => {
+                    const merged = mergeMessages(current, loaded);
+                    return currentPending && !hasSavedUserMessage ? [...merged, restoredMessages.at(-1)] : merged;
+                });
+                if (currentPending) {
                     setErrorRetryable(true);
                     setError("هذه الرسالة ما زالت بانتظار رد. أعد المحاولة قبل إرسال رسالة أخرى.");
                 } else if (rejectedDraft) {
@@ -138,11 +158,11 @@ export default function Chat() {
                 }
             }
         } catch (loadError) {
-            if (loadError.code !== "ERR_CANCELED" && selectedRef.current?.id === conversation.id) {
+            if (loadError.code !== "ERR_CANCELED" && messageLoad.current.version === version) {
                 setError(errorMessage(loadError, "تعذر تحميل رسائل المحادثة."));
             }
         } finally {
-            if (selectedRef.current?.id === conversation.id) setIsLoadingMessages(false);
+            if (messageLoad.current.version === version && !controller.signal.aborted) setIsLoadingMessages(false);
         }
     }, [user.id]);
 
@@ -168,7 +188,7 @@ export default function Chat() {
     useEffect(() => {
         const controller = new AbortController();
         loadConversations(controller.signal);
-        return () => controller.abort();
+        return () => { controller.abort(); messageLoad.current.controller?.abort(); };
     }, [loadConversations]);
 
     useEffect(() => {
@@ -191,6 +211,7 @@ export default function Chat() {
 
     async function submitPending(pending) {
         const conversationId = pending.conversationId;
+        if (sendingConversationIds.current.has(conversationId)) return;
         sendingConversationIds.current.add(conversationId);
         setIsSending(true);
         setError("");
@@ -280,15 +301,18 @@ export default function Chat() {
     return (
         <main className="chat-page" dir="rtl">
             <header className="chat-page__header">
-                <div><h1>المحادثات</h1><Link to="/">العودة للرئيسية</Link></div>
-                <TutorMentorSelector mode={mode} onChangeMode={setMode} disabled={isCreating} />
-                <button onClick={handleNewConversation} disabled={isCreating}>{isCreating ? "جارٍ الإنشاء..." : "محادثة جديدة"}</button>
+                <PageHeading icon="chat" title="مساحة للسؤال والاكتشاف" description="تحتاج تفهم فكرة، أو ترتّب خطوتك القادمة؟ ابدأ من هنا." />
+                <BackLink>العودة للرئيسية</BackLink>
             </header>
+            <section className="chat-start" aria-label="بدء محادثة">
+                <TutorMentorSelector mode={mode} onChangeMode={setMode} disabled={isCreating} />
+                <button className="new-conversation-button" onClick={handleNewConversation} disabled={isCreating}>{isCreating ? "جارٍ الإنشاء..." : `ابدأ مع ${mode === "tutor" ? "المعلّم" : "المرشد"}`}</button>
+            </section>
             <div className="chat-layout">
                 <aside><ConversationList conversations={conversations} selectedId={selected?.id} onSelect={selectConversation} isLoading={isLoadingConversations} /></aside>
                 <section className="chat-panel" aria-busy={isLoadingMessages || isSending}>
                     {!selected && !isLoadingConversations && <p>اختر الوضع ثم أنشئ محادثة جديدة.</p>}
-                    {selected && <h2>{selected.title} · {selected.mode === "tutor" ? "معلم" : "مرشد"}</h2>}
+                    {selected && <div className="chat-current-heading"><span className="chat-mode-badge">{selected.mode === "tutor" ? "المعلّم · نفهم ونتدرّب" : "المرشد · نخطّط ونستكشف"}</span><h2>{selected.title}</h2></div>}
                     <MessageList messages={messages} isLoading={isLoadingMessages || isSending} error={error}
                         onRetry={() => pendingMessage ? submitPending(pendingMessage) : loadConversations()}
                         canRetry={errorRetryable}

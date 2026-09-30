@@ -54,10 +54,11 @@ Keep the student's message saved even when the AI fails.
 
 ## Provider
 
-`LLM_PROVIDER=mock` (default) returns fixed, checked Arabic replies labelled `[رد تجريبي]`.
-To add a real provider: add `providers/<name>Provider.js` with
-`generate({ system, context, messages, signal }) => Promise<string>`, register it in `providers/index.js`,
-and set `LLM_PROVIDER`, `LLM_API_KEY`, `LLM_MODEL`.
+`LLM_PROVIDER=gemini` uses the implemented Gemini adapter. Configure `LLM_API_KEY` and `LLM_MODEL` on the server. Production startup rejects the mock provider.
+
+The `mock` adapter remains for deterministic offline tests and evaluation; it is not a production fallback. Its fixed replies are labelled `[رد تجريبي]`.
+
+To extend providers, implement `generate({ system, context, messages, signal }) => Promise<string>` and register the adapter in `providers/index.js`.
 
 - Send `system` as the system prompt
 - **Never** add `context` to the system prompt. Use `toChatMessages({ context, messages })`

@@ -1,5 +1,6 @@
+import BackLink from "../../components/design/BackLink.jsx";
+import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
-import { Link } from "react-router";
 import { getProfile, updateProfile } from "../../services/profile.js";
 import { getLocale } from "../../locales/locale.js";
 import "../../styles/profile.css";
@@ -131,12 +132,9 @@ function Profile() {
   return (
     <main className="profile-page">
       <section className="profile-card" aria-labelledby="profile-title">
-        <Link to="/">{locale.profile.backHome}</Link>
+        <BackLink>{locale.profile.backHome}</BackLink>
 
-        <h1 id="profile-title">{locale.profile.title}</h1>
-        <p className="profile-description">
-          {locale.profile.description}
-        </p>
+        <PageHeading icon="user" tone="rose" id="profile-title" title={locale.profile.title} description={locale.profile.description} />
 
         {loading ? (
           <p role="status">{locale.profile.loading}</p>

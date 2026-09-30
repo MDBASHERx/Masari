@@ -23,13 +23,7 @@
     color: var(--color-text-muted);
 }
 
-.assessment-mock {
-    padding: 8px 12px;
-    border-radius: var(--radius-sm);
-    background-color: var(--color-yellow);
-    color: var(--color-warning);
-    font-size: 0.9rem;
-}
+
 
 .assessment-facts {
     display: grid;
