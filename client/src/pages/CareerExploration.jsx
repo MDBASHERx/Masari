@@ -1,52 +1,45 @@
-function CareerExploration() {
-  const careers = [
-    {
-      id: 1,
-      title: "الهندسة",
-      description:
-        "استخدم الرياضيات والعلوم لتصميم حلول للمشاكل الواقعية.",
-      reason:
-        "قد يناسبك هذا المجال إذا كنت تحب حل المشاكل وبناء الأشياء.",
-      activity:
-        "جرّب تصميم جسر بسيط من الورق واختبر كم وزن يستطيع حمله.",
-    },
-    {
-      id: 2,
-      title: "علوم الحاسوب",
-      description:
-        "تعلم البرمجة وكيفية بناء التطبيقات والأنظمة الرقمية.",
-      reason:
-        "قد يناسبك هذا المجال إذا كنت تحب التكنولوجيا والتفكير المنطقي.",
-      activity:
-        "ابنِ برنامج JavaScript صغير يحسب مجموع رقمين.",
-    },
-  ];
+import { useEffect, useState } from "react";
+import { Link } from "react-router";
+import { getCareerPaths } from "../services/careerPaths.js";
+import "../styles/career.css";
 
-  return (
-    <section className="career-page">
-      <h1>استكشف مستقبلك</h1>
+export default function CareerExploration() {
+    const [data, setData] = useState(null);
+    const [error, setError] = useState("");
+    const [reloadKey, setReloadKey] = useState(0);
 
-      <p className="career-intro">
-        اكتشف مجالات مختلفة وتعرّف على نشاط بسيط يمكنك تجربته.
-      </p>
+    useEffect(() => {
+        const controller = new AbortController();
+        getCareerPaths(controller.signal)
+            .then(setData)
+            .catch((requestError) => {
+                if (requestError.code !== "ERR_CANCELED") setError("تعذر تحميل المسارات المهنية.");
+            });
+        return () => controller.abort();
+    }, [reloadKey]);
 
-      <div className="career-grid">
-        {careers.map((career) => (
-          <article className="career-card" key={career.id}>
-            <h2>{career.title}</h2>
-
-            <p>{career.description}</p>
-
-            <h3>لماذا تستكشفه؟</h3>
-            <p>{career.reason}</p>
-
-            <h3>نشاط عملي</h3>
-            <p>{career.activity}</p>
-          </article>
-        ))}
-      </div>
-    </section>
-  );
+    return (
+        <main className="career-page container" dir="rtl">
+            <Link to="/">العودة للرئيسية</Link>
+            <h1>استكشف مستقبلك</h1>
+            {!data && !error && <p role="status">جاري تحميل المسارات...</p>}
+            {error && <div role="alert"><p>{error}</p><button onClick={() => { setError(""); setReloadKey((key) => key + 1); }}>إعادة المحاولة</button></div>}
+            {data?.disclaimer && <p className="career-intro">{data.disclaimer}</p>}
+            <div className="career-grid">
+                {data?.paths?.map((path) => (
+                    <article className="career-card" key={path.id}>
+                        <h2>{path.title}</h2><p>{path.summary}</p>
+                        <h3>لماذا تستكشفه؟</h3><ul>{path.whyItMightFit.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+                        <h3>المهارات المرتبطة</h3><ul>{path.relatedSkills.map((skill) => <li key={skill.skillId}><strong>{skill.skillId}:</strong> {skill.why}</li>)}</ul>
+                        <h3>مواد تساعدك</h3><p>{path.subjectsToFocus.join("، ")}</p>
+                        <h3>{path.activity.title}</h3><p>{path.activity.minutes} دقيقة</p>
+                        <p><strong>المواد:</strong> {path.activity.materials.join("، ")}</p>
+                        <ol>{path.activity.steps.map((step) => <li key={step}>{step}</li>)}</ol>
+                        <p>{path.activity.reflection}</p>
+                        <h3>أسئلة للاستكشاف</h3><ul>{path.questionsToExplore.map((question) => <li key={question}>{question}</li>)}</ul>
+                    </article>
+                ))}
+            </div>
+        </main>
+    );
 }
-
-export default CareerExploration;

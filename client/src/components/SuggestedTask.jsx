@@ -1,4 +1,4 @@
-function SuggestedTask({ task, onAdd }) {
+function SuggestedTask({ task, onAdd, status = "idle", error = "" }) {
   if (!task) {
     return null;
   }
@@ -18,9 +18,10 @@ function SuggestedTask({ task, onAdd }) {
         {task.minutes} دقائق
       </p>
 
-      <button onClick={() => onAdd(task)}>
-        أضف إلى خطتي
+      <button onClick={() => onAdd(task)} disabled={status === "loading" || status === "success"}>
+        {status === "loading" ? "جارٍ الإضافة..." : status === "success" ? "تمت الإضافة" : "أضف إلى خطتي"}
       </button>
+      {error && <p role="alert">{error}</p>}
 
     </div>
   );

@@ -1,8 +1,8 @@
-function MessageBubble({ text, role }) {
+function MessageBubble({ content, role }) {
   return (
-    <div>
-      <p>{text}</p>
-      <small>{role}</small>
+    <div className={`message message--${role}`}>
+      <p>{content}</p>
+      <small>{role === "user" ? "أنت" : "المساعد"}</small>
     </div>
   );
 }

@@ -1,10 +1,11 @@
-function TutorMentorSelector({ mode, onChangeMode }) {
+function TutorMentorSelector({ mode, onChangeMode, disabled = false }) {
   return (
     <div className="mode-selector">
       
 <button
   className={mode === "tutor" ? "mode-button active" : "mode-button"}
   onClick={() => onChangeMode("tutor")}
+  disabled={disabled}
 >
   Tutor
 </button>
@@ -12,6 +13,7 @@ function TutorMentorSelector({ mode, onChangeMode }) {
 <button
   className={mode === "mentor" ? "mode-button active" : "mode-button"}
   onClick={() => onChangeMode("mentor")}
+  disabled={disabled}
 >
   Mentor
   

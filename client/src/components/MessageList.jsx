@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import MessageBubble from "./MessageBubble.jsx";
 
 function MessageList({
@@ -5,6 +6,7 @@ function MessageList({
   isLoading,
   error,
   onRetry,
+  renderAfterMessage,
 }) {
   if (
     messages.length === 0 &&
@@ -17,19 +19,18 @@ function MessageList({
   return (
     <div>
       {messages.map((message) => (
-        <MessageBubble
-          key={message.id}
-          text={message.text}
-          role={message.role}
-        />
+        <Fragment key={message.id}>
+          <MessageBubble content={message.content} role={message.role} />
+          {renderAfterMessage?.(message)}
+        </Fragment>
       ))}
 
       {isLoading && (
-        <p>جاري كتابة الرد...</p>
+        <p role="status">جاري انتظار رد المساعد...</p>
       )}
 
       {error && (
-        <div>
+        <div role="alert">
           <p>{error}</p>
 
           <button onClick={onRetry}>

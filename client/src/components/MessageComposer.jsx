@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function MessageComposer({ onSend }) {
+function MessageComposer({ onSend, disabled = false }) {
   const [text, setText] = useState("");
 
   function handleSubmit(e) {
@@ -10,8 +10,7 @@ function MessageComposer({ onSend }) {
       return;
     }
 
-    onSend(text);
-    setText("");
+    if (onSend(text) !== false) setText("");
   }
 
   return (
@@ -21,9 +20,10 @@ function MessageComposer({ onSend }) {
         placeholder="اكتب رسالتك..."
         value={text}
         onChange={(e) => setText(e.target.value)}
+        disabled={disabled}
       />
 
-      <button type="submit">إرسال</button>
+      <button type="submit" disabled={disabled}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
     </form>
   );
 }
