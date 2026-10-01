@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getLocale } from "../../locales/locale.js";
+import AuthLayout from "../../components/design/AuthLayout.jsx";
+import PasswordInput from "../../components/design/PasswordInput.jsx";
 import "../../styles/Auth.css";
 
 function Login() 
@@ -54,7 +56,7 @@ function Login()
 
     if (loading) 
     {
-        return <p role="status">{locale.auth.loadingSession}</p>;
+        return <AuthLayout><section className="auth-card"><p role="status">{locale.auth.loadingSession}</p></section></AuthLayout>;
     }
 
     if (isAuthenticated) 
@@ -67,7 +69,7 @@ function Login()
     }
 
     return (
-        <main className="auth-page">
+        <AuthLayout>
             <section className="auth-card" aria-labelledby="login-title">
                 <p className="auth-brand">
                     <bdi lang="ar" dir="rtl">
@@ -91,7 +93,7 @@ function Login()
                     </p>
                 )}
 
-                <form onSubmit={handleSubmit} className="auth-form">
+                <form onSubmit={handleSubmit} className="auth-form" aria-busy={submitting}>
                     <div className="auth-field">
                         <label htmlFor="email">{locale.auth.emailLabel}</label>
                         <input id="email" name="email" type="email" dir="ltr" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} disabled={submitting} required/>
@@ -99,7 +101,7 @@ function Login()
 
                     <div className="auth-field">
                         <label htmlFor="password">{locale.auth.passwordLabel}</label>
-                        <input id="password" name="password" type="password" dir="ltr" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={submitting} required/>
+                        <PasswordInput id="password" name="password" type="password" dir="ltr" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} disabled={submitting} required/>
                     </div>
 
                     {errorKey && (
@@ -119,7 +121,7 @@ function Login()
                 </p>
                 
             </section>
-        </main>
+        </AuthLayout>
     );
 }
 

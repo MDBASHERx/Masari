@@ -16,6 +16,17 @@ const ar = {
 
     auth: {
         brand: "مساري",
+        storyLabel: "رحلتك مع مساري",
+        storyBadge: "مساحة صغيرة لطموح كبير",
+        storyTitle: "لكل حلم بداية،",
+        storyAccent: "وبدايتك من هنا.",
+        storyDescription: "تعلّم بطريقتك، اكتشف قدراتك، واقترب من مستقبلك خطوة بخطوة.",
+        benefitPlan: "خطة تناسبك",
+        benefitTutor: "معلم يرافقك",
+        benefitFuture: "مستقبل تستكشفه",
+        storyNote: "لا تحتاج أن تعرف كل الإجابات، يكفي أن تبدأ.",
+        showPassword: "إظهار",
+        hidePassword: "إخفاء",
         loadingSession: "جارٍ تحميل الجلسة…",
 
         loginTitle: "أهلًا بعودتك",
@@ -51,6 +62,8 @@ const ar = {
         invalidCredentials: "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
         emailNotConfirmed: "يرجى تأكيد بريدك الإلكتروني قبل تسجيل الدخول.",
         loginFailed: "تعذّر تسجيل الدخول. حاول مرة أخرى.",
+        emailAlreadyUsed: "هذا البريد الإلكتروني مستخدم بالفعل. سجّل الدخول إلى حسابك.",
+        weakPassword: "كلمة المرور ضعيفة. استخدم كلمة أطول وأكثر تنوعًا.",
         registerFailed: "تعذّر إنشاء الحساب. حاول مرة أخرى.",
         sessionRestore: "تعذّر استعادة الجلسة. أعد تحميل الصفحة للمحاولة.",
         passwordMismatch: "كلمتا المرور غير متطابقتين.",
