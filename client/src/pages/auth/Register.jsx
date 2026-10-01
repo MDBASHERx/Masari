@@ -1,7 +1,10 @@
+import { registrationErrorKey } from "../../services/signupResult.js";
 import { useState } from "react";
 import { Link, Navigate } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getLocale } from "../../locales/locale.js";
+import AuthLayout from "../../components/design/AuthLayout.jsx";
+import PasswordInput from "../../components/design/PasswordInput.jsx";
 import "../../styles/Auth.css";
 
 function Register() 
@@ -63,12 +66,7 @@ function Register()
                 setSubmitted(true);
             }
         } catch (error) {
-            if (error.code === "over_request_rate_limit" || error.code === "over_email_send_rate_limit")
-            {
-                setErrorKey("tooManyRequests");
-            } else {
-                setErrorKey("registerFailed");
-            }
+            setErrorKey(registrationErrorKey(error));
         } finally {
             setSubmitting(false);
         }
@@ -76,7 +74,7 @@ function Register()
 
     if (loading) 
     {
-        return <p role="status">{locale.auth.loadingSession}</p>;
+        return <AuthLayout><section className="auth-card"><p role="status">{locale.auth.loadingSession}</p></section></AuthLayout>;
     }
 
     if (isAuthenticated) 
@@ -87,7 +85,7 @@ function Register()
     if (submitted) 
     {
         return (
-            <main className="auth-page">
+            <AuthLayout>
                 <section className="auth-card">
                 <h1>{locale.auth.registrationSubmitted}</h1>
 
@@ -95,14 +93,14 @@ function Register()
                     {locale.auth.registrationEmailHint}
                 </p>
 
-                <Link to="/login">{locale.auth.backToLogin}</Link>
+                <Link className="ui-button" to="/login">{locale.auth.backToLogin}</Link>
                 </section>
-            </main>
+            </AuthLayout>
         );
     }
 
     return (
-        <main className="auth-page">
+        <AuthLayout>
             <section className="auth-card" aria-labelledby="register-title">
                 <p className="auth-brand">
                     <bdi lang="ar" dir="rtl">
@@ -116,7 +114,7 @@ function Register()
                     {locale.auth.registerDescription}
                 </p>
 
-                <form className="auth-form" onSubmit={handleSubmit}>
+                <form className="auth-form" onSubmit={handleSubmit} aria-busy={submitting}>
                     <div className="auth-field">
                         <label htmlFor="fullName">{locale.auth.fullNameLabel}</label>
                         <input id="fullName" name="fullName" type="text" dir="auto" autoComplete="name" maxLength={100} value={fullName} onChange={(event) => setFullName(event.target.value)} disabled={submitting} required />
@@ -124,23 +122,24 @@ function Register()
 
                     <div className="auth-field">
                         <label htmlFor="email">{locale.auth.emailLabel}</label>
-                        <input id="email" name="email" type="email" dir="ltr" autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} disabled={submitting} required/>
+                        <input id="email" name="email" type="email" dir="ltr" autoComplete="username" value={email} onChange={(event) => { setEmail(event.target.value); setErrorKey(""); }} aria-invalid={errorKey === "emailAlreadyUsed"} aria-describedby={errorKey === "emailAlreadyUsed" ? "register-error" : undefined} disabled={submitting} required/>
                     </div>
 
                     <div className="auth-field">
                         <label htmlFor="password">{locale.auth.passwordLabel}</label>
-                        <input id="password" name="password" type="password" dir="ltr" autoComplete="new-password" minLength={8} aria-describedby="password-hint" value={password} onChange={(event) => setPassword(event.target.value)} disabled={submitting} required/>
+                        <PasswordInput id="password" name="password" type="password" dir="ltr" autoComplete="new-password" minLength={8} aria-describedby="password-hint" value={password} onChange={(event) => setPassword(event.target.value)} disabled={submitting} required/>
                         <small id="password-hint" className="auth-hint">{locale.auth.passwordHint}</small>
                     </div>
 
                     <div className="auth-field">
                         <label htmlFor="confirmPassword">{locale.auth.confirmPasswordLabel}</label>
-                        <input id="confirmPassword" name="confirmPassword" type="password" dir="ltr" autoComplete="new-password" minLength={8} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} disabled={submitting} required/>
+                        <PasswordInput id="confirmPassword" name="confirmPassword" type="password" dir="ltr" autoComplete="new-password" minLength={8} value={confirmPassword} onChange={(event) => setConfirmPassword(event.target.value)} disabled={submitting} required/>
                     </div>
 
                     {errorKey && (
-                        <p className="auth-error" role="alert">
+                        <p id="register-error" className="auth-error" role="alert">
                             {locale.error[errorKey]}
+                            {errorKey === "emailAlreadyUsed" && <> <Link to="/login">{locale.auth.loginButton}</Link></>}
                         </p>
                     )}
 
@@ -154,7 +153,7 @@ function Register()
                     <Link to="/login">{locale.auth.loginButton}</Link>
                 </p>
             </section>
-        </main>
+        </AuthLayout>
     );
 }
 

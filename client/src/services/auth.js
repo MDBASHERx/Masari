@@ -1,3 +1,4 @@
+import { isExistingSignup } from "./signupResult.js";
 import { supabase } from "./supabase.js";
 
 // Create an account
@@ -17,7 +18,13 @@ export const register = async ({ fullName, email, password }) => {
         throw error;
     }
 
-  return data;
+    if (isExistingSignup(data)) {
+        const duplicate = new Error("Email already registered");
+        duplicate.code = "email_exists";
+        throw duplicate;
+    }
+
+    return data;
 };
 
 // Sign in
