@@ -1,10 +1,13 @@
 import LoadingIndicator from "./design/LoadingIndicator.jsx";
+import Icon from "./design/Icon.jsx";
 import { Fragment } from "react";
 import MessageBubble from "./MessageBubble.jsx";
 
 function MessageList({
   messages,
   isLoading,
+  isSending = false,
+  mode = "tutor",
   error,
   onRetry,
   canRetry = true,
@@ -30,7 +33,13 @@ function MessageList({
       ))}
 
       {isLoading && (
-        <p><LoadingIndicator>جاري انتظار رد المساعد...</LoadingIndicator></p>
+        isSending ? <div className="assistant-wait" role="status">
+          <span className="assistant-wait-avatar" aria-hidden="true"><Icon name={mode === "mentor" ? "compass" : "spark"} size={22} /></span>
+          <div className="assistant-wait-bubble">
+            <span className="assistant-wait-title">{mode === "mentor" ? "مرشدك يفكّر معك" : "معلّمك يحضّر الشرح"}</span>
+            <span className="assistant-wait-detail">جارٍ انتظار رد المساعد<span className="typing-dots" aria-hidden="true"><i /><i /><i /></span></span>
+          </div>
+        </div> : <div className="chat-history-loading"><LoadingIndicator>جارٍ تحميل المحادثة…</LoadingIndicator></div>
       )}
 
       {error && (
