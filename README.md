@@ -3,10 +3,6 @@
 </p>
 
 <p align="center">
-  <strong>مساري — مرشدك المهني لمسارك الصحيح</strong>
-</p>
-
-<p align="center">
   An Arabic-first learning platform that helps students understand their skills,
   follow personalized learning plans, and explore future career paths.
 </p>
@@ -260,7 +256,5 @@ Supabase Auth settings, and final acceptance testing.
 ---
 
 <p align="center">
-  <strong>مساري — كل خطوة، أقرب لمستقبلك</strong>
-  <br />
   Learn · Practice · Explore · Grow
 </p>
