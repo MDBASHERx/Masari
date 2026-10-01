@@ -1,3 +1,4 @@
+import ChatEmptyState from "../components/ChatEmptyState.jsx";
 import LoadingIndicator from "../components/design/LoadingIndicator.jsx";
 import BackLink from "../components/design/BackLink.jsx";
 import PageHeading from "../components/design/PageHeading.jsx";
@@ -312,9 +313,9 @@ export default function Chat() {
             <div className="chat-layout">
                 <aside><ConversationList conversations={conversations} selectedId={selected?.id} onSelect={selectConversation} isLoading={isLoadingConversations} /></aside>
                 <section className="chat-panel" aria-busy={isLoadingMessages || isSending}>
-                    {!selected && !isLoadingConversations && <p>اختر الوضع ثم أنشئ محادثة جديدة.</p>}
                     {selected && <div className="chat-current-heading"><span className="chat-mode-badge">{selected.mode === "tutor" ? "المعلّم · نفهم ونتدرّب" : "المرشد · نخطّط ونستكشف"}</span><h2>{selected.title}</h2></div>}
-                    <MessageList messages={messages} isLoading={isLoadingMessages || isSending} error={error}
+                    <MessageList messages={messages} isLoading={isLoadingMessages || isSending || (!selected && isLoadingConversations)} error={error}
+                        emptyState={<ChatEmptyState mode={selected?.mode || mode} hasConversation={Boolean(selected)} onCreate={handleNewConversation} creating={isCreating} onChoosePrompt={setComposerText} />}
                         onRetry={() => pendingMessage ? submitPending(pendingMessage) : loadConversations()}
                         canRetry={errorRetryable}
                         onDismiss={() => setError("")}
