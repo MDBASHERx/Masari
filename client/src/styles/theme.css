@@ -163,7 +163,5 @@ body { background: #faf8fc; }
 .inline-error { color: #a33648; margin-top: 12px; font-size: 13px; }
 .chat-feedback { padding: 17px; border: 1px solid #eccbd2; border-radius: 15px; background: #fff5f6; color: #963d50; }
 .chat-feedback p { margin-bottom: 12px; }
-.button-spinner { width: 16px; height: 16px; border: 2px solid currentColor; border-inline-end-color: transparent; border-radius: 50%; animation: button-spin 1s linear infinite; }
-@keyframes button-spin { to { transform: rotate(360deg); } }
 #message-length { font-size: 11px; color: #82718f; align-self: center; }
 @media (max-width: 600px) { .suggested-task { padding: 16px; } .suggested-task .ui-button { width: 100%; } }

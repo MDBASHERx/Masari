@@ -1,3 +1,4 @@
+import LoadingIndicator from "./design/LoadingIndicator.jsx";
 import { Fragment } from "react";
 import MessageBubble from "./MessageBubble.jsx";
 
@@ -28,7 +29,7 @@ function MessageList({
       ))}
 
       {isLoading && (
-        <p role="status">جاري انتظار رد المساعد...</p>
+        <p><LoadingIndicator>جاري انتظار رد المساعد...</LoadingIndicator></p>
       )}
 
       {error && (

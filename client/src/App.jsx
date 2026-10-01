@@ -1,3 +1,4 @@
+import LoadingIndicator from "./components/design/LoadingIndicator.jsx";
 import AmbientBackground from "./components/design/AmbientBackground.jsx";
 import SiteHeader from "./components/design/SiteHeader.jsx";
 import { lazy, Suspense } from "react";
@@ -25,7 +26,7 @@ function App()
         <>
         <AmbientBackground />
         <SiteHeader />
-        <Suspense fallback={<main className="container" role="status">{locale.all.loading}</main>}>
+        <Suspense fallback={<main className="container"><LoadingIndicator>{locale.all.loading}</LoadingIndicator></main>}>
         <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />

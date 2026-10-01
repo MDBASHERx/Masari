@@ -1,3 +1,4 @@
+import LoadingIndicator from "../design/LoadingIndicator.jsx";
 import { Navigate, Outlet } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
 import { getLocale } from "../../locales/locale.js";
@@ -9,7 +10,7 @@ function ProtectedRoute()
 
     if (loading) 
     {
-        return <p role="status">{locale.auth.loadingSession}</p>;
+        return <p><LoadingIndicator>{locale.auth.loadingSession}</LoadingIndicator></p>;
     }
 
     if (authError) 

@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import BackLink from "../../components/design/BackLink.jsx";
 import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
@@ -78,7 +79,7 @@ function LearningPath() {
         return (
             <main className="assessment-page learning-plan-page">
                 <section className="assessment-card" aria-busy="true">
-                    <p role="status">{locale.learningPath.loading}</p>
+                    <p><LoadingIndicator>{locale.learningPath.loading}</LoadingIndicator></p>
                 </section>
             </main>
         );

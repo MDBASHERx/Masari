@@ -1,3 +1,4 @@
+import LoadingIndicator from "../components/design/LoadingIndicator.jsx";
 import BackLink from "../components/design/BackLink.jsx";
 import PageHeading from "../components/design/PageHeading.jsx";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -306,7 +307,7 @@ export default function Chat() {
             </header>
             <section className="chat-start" aria-label="بدء محادثة">
                 <TutorMentorSelector mode={mode} onChangeMode={setMode} disabled={isCreating} />
-                <button className="new-conversation-button" onClick={handleNewConversation} disabled={isCreating}>{isCreating ? "جارٍ الإنشاء..." : `ابدأ مع ${mode === "tutor" ? "المعلّم" : "المرشد"}`}</button>
+                <button className="new-conversation-button" onClick={handleNewConversation} disabled={isCreating}>{isCreating ? <LoadingIndicator announce={false}>جارٍ الإنشاء…</LoadingIndicator> : `ابدأ مع ${mode === "tutor" ? "المعلّم" : "المرشد"}`}</button>
             </section>
             <div className="chat-layout">
                 <aside><ConversationList conversations={conversations} selectedId={selected?.id} onSelect={selectConversation} isLoading={isLoadingConversations} /></aside>
@@ -321,7 +322,7 @@ export default function Chat() {
                             <SuggestedTask task={message.suggested_task} status={getTaskState(message.id)?.status}
                                 error={getTaskState(message.id)?.error} onAdd={() => handleAddTask(message)} />
                         ) : null} />
-                    {selected && <MessageComposer text={composerText} onTextChange={setComposerText} onSend={handleSend}
+                    {selected && <MessageComposer isSending={isSending} text={composerText} onTextChange={setComposerText} onSend={handleSend}
                         onCancel={hasRejectedDraft ? () => { removeRejectedDraft(user.id, selected.id); setComposerText(""); setHasRejectedDraft(false); setError(""); } : undefined}
                         maxLength={MAX_MESSAGE_LENGTH} disabled={Boolean(pendingMessage) || isSending || isLoadingMessages} />}
                 </section>

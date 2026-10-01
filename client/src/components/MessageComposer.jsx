@@ -1,8 +1,9 @@
-function MessageComposer({ text, onTextChange, onSend, onCancel, disabled = false, maxLength = 2000 }) {
+import LoadingIndicator from "./design/LoadingIndicator.jsx";
+function MessageComposer({ text, onTextChange, onSend, onCancel, disabled = false, isSending = false, maxLength = 2000 }) {
   function handleSubmit(e) {
     e.preventDefault();
 
-    if (!text.trim()) {
+    if (disabled || !text.trim()) {
       return;
     }
 
@@ -23,7 +24,7 @@ function MessageComposer({ text, onTextChange, onSend, onCancel, disabled = fals
       />
 
       <span id="message-length" dir="ltr">{text.length} / {maxLength}</span>
-      <button className="ui-button" type="submit" disabled={disabled || !text.trim()}>{disabled ? "جارٍ الإرسال..." : "إرسال"}</button>
+      <button className="ui-button" type="submit" disabled={disabled || !text.trim()}>{isSending ? <LoadingIndicator announce={false}>جارٍ الإرسال…</LoadingIndicator> : "إرسال"}</button>
       {onCancel && <button className="ui-button ui-button--soft" type="button" onClick={onCancel}>إلغاء الرسالة المرفوضة</button>}
     </form>
   );
