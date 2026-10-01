@@ -10,13 +10,14 @@ function MessageList({
   canRetry = true,
   onDismiss,
   renderAfterMessage,
+  emptyState,
 }) {
   if (
     messages.length === 0 &&
     !isLoading &&
     !error
   ) {
-    return <p>لا توجد رسائل بعد</p>;
+    return emptyState ?? <p>لا توجد رسائل بعد</p>;
   }
 
   return (
