@@ -1,9 +1,10 @@
+import LoadingIndicator from "./design/LoadingIndicator.jsx";
 function ConversationList({ conversations, selectedId, onSelect, isLoading }) {
   return (
     <div className= "conversation-list">
       <h3>المحادثات</h3>
 
-      {isLoading && <p role="status">جاري تحميل المحادثات...</p>}
+      {isLoading && <p><LoadingIndicator>جاري تحميل المحادثات...</LoadingIndicator></p>}
       {!isLoading && conversations.length === 0 && <p>لا توجد محادثات محفوظة.</p>}
       {conversations.map((conversation) => (
         <button

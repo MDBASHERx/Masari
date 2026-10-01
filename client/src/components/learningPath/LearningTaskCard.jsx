@@ -1,3 +1,4 @@
+import LoadingIndicator from "../design/LoadingIndicator.jsx";
 import { Link } from "react-router";
 import { getLocale } from "../../locales/locale.js";
 
@@ -38,7 +39,7 @@ function LearningTaskCard({ task, saving, onToggleDone }) {
                             disabled={saving}
                             onChange={() => onToggleDone(task)}
                         />
-                        {saving ? locale.learningPath.saving : locale.learningPath.markDone}
+                        {saving ? <LoadingIndicator announce={false}>{locale.learningPath.saving}</LoadingIndicator> : locale.learningPath.markDone}
                     </label>
                 </div>
             </div>

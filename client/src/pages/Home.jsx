@@ -1,3 +1,4 @@
+import LoadingIndicator from "../components/design/LoadingIndicator.jsx";
 import { useState } from "react";
 import { Link } from "react-router";
 import { useAuth } from "../hooks/useAuth.js";
@@ -43,6 +44,6 @@ export default function Home() {
         </section>
         <aside className="home-encouragement"><span className="encouragement-icon"><Icon name="spark" size={29} /></span><div><strong>مش لازم تعرف كل الإجابات من أول يوم.</strong><p>يكفي تكون عندك الرغبة تسأل، وتجرب، وتتعلم.</p></div><Link to="/chat">خلّينا نبدأ <Icon name="arrow" size={18} /></Link></aside>
         {error && <p role="alert">{locale.error.logoutFailed}</p>}
-        <footer className="home-footer"><span>مساري · مرشدك المهني لمسارك الصحيح</span><button type="button" disabled={busy} onClick={handleLogout}>{busy ? locale.auth.loggingOut : locale.auth.logout}</button></footer>
+        <footer className="home-footer"><span>مساري · مرشدك المهني لمسارك الصحيح</span><button type="button" disabled={busy} onClick={handleLogout}>{busy ? <LoadingIndicator announce={false}>{locale.auth.loggingOut}</LoadingIndicator> : locale.auth.logout}</button></footer>
     </main>;
 }

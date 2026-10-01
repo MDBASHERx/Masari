@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import BackLink from "../../components/design/BackLink.jsx";
 import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
@@ -74,7 +75,7 @@ function Progress() {
                 <section className="progress-state">
                     <h1>{locale.progress.title}</h1>
 
-                    <p>{locale.progress.loading}</p>
+                    <p><LoadingIndicator>{locale.progress.loading}</LoadingIndicator></p>
                 </section>
             </main>
         );

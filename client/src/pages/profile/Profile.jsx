@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import BackLink from "../../components/design/BackLink.jsx";
 import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
@@ -137,7 +138,7 @@ function Profile() {
         <PageHeading icon="user" tone="rose" id="profile-title" title={locale.profile.title} description={locale.profile.description} />
 
         {loading ? (
-          <p role="status">{locale.profile.loading}</p>
+          <p><LoadingIndicator>{locale.profile.loading}</LoadingIndicator></p>
         ) : loadError ? (
           <div className="profile-feedback">
             <p className="profile-error" role="alert">
@@ -253,7 +254,7 @@ function Profile() {
               type="submit"
               disabled={saving}
             >
-              {saving ? locale.profile.saving : locale.profile.save}
+              {saving ? <LoadingIndicator announce={false}>{locale.profile.saving}</LoadingIndicator> : locale.profile.save}
             </button>
           </form>
         )}

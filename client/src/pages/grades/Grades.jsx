@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import BackLink from "../../components/design/BackLink.jsx";
 import PageHeading from "../../components/design/PageHeading.jsx";
 import { useEffect, useRef, useState } from "react";
@@ -293,7 +294,7 @@ function Grades() {
                         <div className="grades-form-actions">
                             <button type="submit">
                                 {saving
-                                    ? text.saving
+                                    ? <LoadingIndicator announce={false}>{text.saving}</LoadingIndicator>
                                     : editingId
                                       ? text.saveChanges
                                       : text.save}
@@ -332,7 +333,7 @@ function Grades() {
                 <h2 id="grades-list-title">{text.listTitle}</h2>
 
                 {loading ? (
-                    <p role="status">{locale.all.loading}</p>
+                    <p><LoadingIndicator>{locale.all.loading}</LoadingIndicator></p>
                 ) : loadError ? (
                     <div>
                         <p className="grades-error" role="alert">

@@ -1,3 +1,4 @@
+import LoadingIndicator from "../components/design/LoadingIndicator.jsx";
 import BackLink from "../components/design/BackLink.jsx";
 import PageHeading from "../components/design/PageHeading.jsx";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ export default function CareerExploration() {
         <main className="career-page container" dir="rtl">
             <BackLink>العودة للرئيسية</BackLink>
             <PageHeading icon="compass" tone="peach" title="استكشف مستقبلك" description="جرّب، اسأل، واكتشف ما يثير فضولك. الخيارات أمامك، والقرار لك." />
-            {!data && !error && <p role="status">جاري تحميل المسارات...</p>}
+            {!data && !error && <p><LoadingIndicator>جاري تحميل المسارات...</LoadingIndicator></p>}
             {error && <div role="alert"><p>{error}</p><button className="ui-button ui-button--soft" type="button" onClick={() => { setError(""); setReloadKey((key) => key + 1); }}>إعادة المحاولة</button></div>}
             {data?.disclaimer && <p className="career-intro">{data.disclaimer}</p>}
             <div className="career-grid">

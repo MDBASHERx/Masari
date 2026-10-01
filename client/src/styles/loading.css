@@ -1,0 +1,25 @@
+.loading-indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .55rem;
+    max-width: 100%;
+    vertical-align: middle;
+    line-height: inherit;
+}
+.loading-indicator__ring {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 1em;
+    height: 1em;
+    min-width: 14px;
+    min-height: 14px;
+    border: 2px solid currentColor;
+    border-inline-end-color: transparent;
+    border-radius: 50%;
+    animation: masari-loading-spin .8s linear infinite;
+}
+@keyframes masari-loading-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .loading-indicator__ring { animation: none; }
+}

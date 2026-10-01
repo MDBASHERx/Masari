@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import { registrationErrorKey } from "../../services/signupResult.js";
 import { useState } from "react";
 import { Link, Navigate } from "react-router";
@@ -74,7 +75,7 @@ function Register()
 
     if (loading) 
     {
-        return <AuthLayout><section className="auth-card"><p role="status">{locale.auth.loadingSession}</p></section></AuthLayout>;
+        return <AuthLayout><section className="auth-card"><p><LoadingIndicator>{locale.auth.loadingSession}</LoadingIndicator></p></section></AuthLayout>;
     }
 
     if (isAuthenticated) 
@@ -144,7 +145,7 @@ function Register()
                     )}
 
                     <button className="auth-button" type="submit" disabled={submitting}>
-                        {submitting ? locale.auth.registering : locale.auth.registerButton}
+                        {submitting ? <LoadingIndicator announce={false}>{locale.auth.registering}</LoadingIndicator> : locale.auth.registerButton}
                     </button>
                 </form>
 

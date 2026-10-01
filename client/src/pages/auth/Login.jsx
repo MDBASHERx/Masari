@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import { useState } from "react";
 import { Link, Navigate, useLocation } from "react-router";
 import { useAuth } from "../../hooks/useAuth.js";
@@ -56,7 +57,7 @@ function Login()
 
     if (loading) 
     {
-        return <AuthLayout><section className="auth-card"><p role="status">{locale.auth.loadingSession}</p></section></AuthLayout>;
+        return <AuthLayout><section className="auth-card"><p><LoadingIndicator>{locale.auth.loadingSession}</LoadingIndicator></p></section></AuthLayout>;
     }
 
     if (isAuthenticated) 
@@ -111,7 +112,7 @@ function Login()
                     )}
 
                     <button className="auth-button" type="submit" disabled={submitting}>
-                        {submitting ? locale.auth.loggingIn : locale.auth.loginButton}
+                        {submitting ? <LoadingIndicator announce={false}>{locale.auth.loggingIn}</LoadingIndicator> : locale.auth.loginButton}
                     </button>
                 </form>
 

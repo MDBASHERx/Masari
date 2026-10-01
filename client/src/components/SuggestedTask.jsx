@@ -1,3 +1,4 @@
+import LoadingIndicator from "./design/LoadingIndicator.jsx";
 import Icon from "./design/Icon.jsx";
 
 export default function SuggestedTask({ task, onAdd, status = "idle", error = "" }) {
@@ -9,8 +10,8 @@ export default function SuggestedTask({ task, onAdd, status = "idle", error = ""
         <p className="suggested-task-title">{task.title}</p>
         <p className="suggested-task-description">مهمة مقترحة من المحادثة، يمكنك إضافتها إلى خطة تعلّمك.</p>
         <button className={`ui-button ${saved ? "ui-button--success" : ""}`} type="button" onClick={() => onAdd(task)} disabled={saving || saved}>
-            {saving ? <span className="button-spinner" aria-hidden="true" /> : <Icon name="path" size={18} />}
-            {saving ? "جارٍ الإضافة…" : saved ? "تمت الإضافة إلى خطتي" : error ? "إعادة محاولة الإضافة" : "أضف إلى خطتي"}
+            {!saving && <Icon name="path" size={18} />}
+            {saving ? <LoadingIndicator announce={false}>جارٍ الإضافة…</LoadingIndicator> : saved ? "تمت الإضافة إلى خطتي" : error ? "إعادة محاولة الإضافة" : "أضف إلى خطتي"}
         </button>
         <span className="sr-only" role="status">{saved ? "تمت إضافة المهمة إلى خطتك" : saving ? "جارٍ إضافة المهمة" : ""}</span>
         {error && <p className="inline-error" role="alert">{error}</p>}

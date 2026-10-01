@@ -1,3 +1,4 @@
+import LoadingIndicator from "../../components/design/LoadingIndicator.jsx";
 import BackLink from "../../components/design/BackLink.jsx";
 import { useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -130,7 +131,7 @@ function Assessment() {
 
                     <button className="assessment-button" type="button" onClick={handleStart} disabled={starting}>
                         {starting
-                            ? locale.assessment.starting
+                            ? <LoadingIndicator announce={false}>{locale.assessment.starting}</LoadingIndicator>
                             : practiceSkill ? locale.practice.start : locale.assessment.start}
                     </button>
                 </section>
@@ -161,7 +162,7 @@ function Assessment() {
                             onClick={handleCreatePlan}
                             disabled={creatingPlan}
                         >
-                            {creatingPlan ? locale.assessment.creatingPlan : locale.assessment.createPlan}
+                            {creatingPlan ? <LoadingIndicator announce={false}>{locale.assessment.creatingPlan}</LoadingIndicator> : locale.assessment.createPlan}
                         </button>
                     )}
                 </section>
@@ -210,7 +211,7 @@ function Assessment() {
 
                     {isLast ? (
                         <button className="assessment-button" type="button" onClick={handleSubmit} disabled={submitting}>
-                            {submitting ? locale.assessment.submitting : locale.assessment.submit}
+                            {submitting ? <LoadingIndicator announce={false}>{locale.assessment.submitting}</LoadingIndicator> : locale.assessment.submit}
                         </button>
                     ) : (
                         <button
